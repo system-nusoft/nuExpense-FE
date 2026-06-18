@@ -76,6 +76,7 @@ export default function ScanPage() {
 
   function handleSaved(expense: Expense) {
     void expense;
+    router.refresh();
     router.push("/expenses?success=1");
   }
 

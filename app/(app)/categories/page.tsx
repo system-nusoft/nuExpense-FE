@@ -6,7 +6,6 @@ import {
   createCategoryApi,
   updateCategoryApi,
   deleteCategoryApi,
-  reorderCategoriesApi,
 } from "@/lib/services/categories.service";
 import { Category } from "@/types";
 import CategoryListItem from "@/components/categories/CategoryListItem";
@@ -83,25 +82,6 @@ export default function CategoriesPage() {
     }
   }
 
-  async function handleMove(index: number, direction: "up" | "down") {
-    const newList = [...categories];
-    const swapIndex = direction === "up" ? index - 1 : index + 1;
-    if (swapIndex < 0 || swapIndex >= newList.length) return;
-
-    [newList[index], newList[swapIndex]] = [newList[swapIndex], newList[index]];
-
-    // Update sortOrder locally
-    const updated = newList.map((cat, i) => ({ ...cat, sortOrder: i }));
-    setCategories(updated);
-
-    try {
-      await reorderCategoriesApi(updated.map((c) => c.id));
-    } catch {
-      // revert on error
-      loadCategories();
-    }
-  }
-
   function openCreate() {
     setEditCategory(null);
     setModalOpen(true);
@@ -161,16 +141,12 @@ export default function CategoriesPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <CategoryListItem
               key={category.id}
               category={category}
               onEdit={openEdit}
               onDelete={handleDelete}
-              onMoveUp={() => handleMove(index, "up")}
-              onMoveDown={() => handleMove(index, "down")}
-              isFirst={index === 0}
-              isLast={index === categories.length - 1}
             />
           ))}
         </div>

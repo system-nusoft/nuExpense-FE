@@ -8,22 +8,19 @@ interface CategoryListItemProps {
   category: Category;
   onEdit: (category: Category) => void;
   onDelete: (category: Category) => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
-  isFirst?: boolean;
-  isLast?: boolean;
 }
 
 export default function CategoryListItem({
   category,
   onEdit,
   onDelete,
-  onMoveUp,
-  onMoveDown,
-  isFirst,
-  isLast,
 }: CategoryListItemProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const iconDisplay =
+    category.icon && !/[a-z]/.test(category.icon)
+      ? category.icon
+      : category.name[0]?.toUpperCase();
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3 shadow-sm">
@@ -32,48 +29,17 @@ export default function CategoryListItem({
         className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-semibold text-sm"
         style={{ backgroundColor: category.color }}
       >
-        {category.icon || category.name[0]?.toUpperCase()}
+        {iconDisplay}
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
         <p className="font-medium text-gray-900 text-sm">{category.name}</p>
-        {category.icon && (
-          <p className="text-xs text-gray-400">{category.icon}</p>
-        )}
-      </div>
-
-      {/* Reorder buttons */}
-      <div className="flex flex-col gap-0.5">
-        <button
-          onClick={onMoveUp}
-          disabled={isFirst}
-          className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
-          aria-label="Move up"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-          </svg>
-        </button>
-        <button
-          onClick={onMoveDown}
-          disabled={isLast}
-          className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
-          aria-label="Move down"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
       </div>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => onEdit(category)}
-        >
+        <Button size="sm" variant="secondary" onClick={() => onEdit(category)}>
           Edit
         </Button>
 

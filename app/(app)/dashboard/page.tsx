@@ -1,18 +1,49 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { getExpensesApi } from "@/lib/services/expenses.service";
+import {
+  getExpensesApi,
+  getMonthlySummaryApi,
+  getCategorySummaryApi,
+  downloadCsvApi,
+} from "@/lib/services/expenses.service";
 import { getCategoriesApi } from "@/lib/services/categories.service";
-import { Expense, Category } from "@/types";
+import { Expense, Category, MonthlySummary, CategorySummary } from "@/types";
 import ExpenseCard from "@/components/expenses/ExpenseCard";
+import MonthlyChart from "@/components/dashboard/MonthlyChart";
+import CategoryChart from "@/components/dashboard/CategoryChart";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
   if (hour < 18) return "Good afternoon";
   return "Good evening";
+}
+
+function currentMonthValue(): string {
+  return new Date().toISOString().slice(0, 7);
+}
+
+function monthLabel(yyyymm: string): string {
+  const [year, month] = yyyymm.split("-").map(Number);
+  return new Date(year, month - 1).toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function prevMonth(yyyymm: string): string {
+  const [year, month] = yyyymm.split("-").map(Number);
+  if (month === 1) return `${year - 1}-12`;
+  return `${year}-${String(month - 1).padStart(2, "0")}`;
+}
+
+function nextMonth(yyyymm: string): string {
+  const [year, month] = yyyymm.split("-").map(Number);
+  if (month === 12) return `${year + 1}-01`;
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
 }
 
 function SkeletonCard() {
@@ -26,6 +57,10 @@ function SkeletonCard() {
       <div className="h-4 bg-gray-200 rounded w-16" />
     </div>
   );
+}
+
+function ChartSkeleton() {
+  return <div className="h-44 bg-gray-100 rounded-xl animate-pulse" />;
 }
 
 function StatCard({
@@ -55,7 +90,26 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [monthlySummary, setMonthlySummary] = useState<MonthlySummary[]>([]);
+  const [categorySummary, setCategorySummary] = useState<CategorySummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [categoryLoading, setCategoryLoading] = useState(true);
+  const [csvLoading, setCsvLoading] = useState(false);
+
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthValue());
+  const [csvStart, setCsvStart] = useState(currentMonthValue());
+  const [csvEnd, setCsvEnd] = useState(currentMonthValue());
+
+  const currencyCode = user?.homeCurrency || "USD";
+
+  function formatCurrency(amount: number): string {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currencyCode,
+      minimumFractionDigits: 2,
+    }).format(amount);
+  }
 
   useEffect(() => {
     async function load() {
@@ -67,7 +121,7 @@ export default function DashboardPage() {
         setExpenses(expData.data);
         setCategories(catData);
       } catch {
-        // fail silently on dashboard
+        // fail silently
       } finally {
         setLoading(false);
       }
@@ -75,28 +129,61 @@ export default function DashboardPage() {
     load();
   }, []);
 
+  useEffect(() => {
+    async function loadSummary() {
+      try {
+        const data = await getMonthlySummaryApi();
+        setMonthlySummary(data);
+      } catch {
+        // fail silently
+      } finally {
+        setSummaryLoading(false);
+      }
+    }
+    loadSummary();
+  }, []);
+
+  const loadCategorySummary = useCallback(async (month: string) => {
+    setCategoryLoading(true);
+    try {
+      const data = await getCategorySummaryApi(month);
+      setCategorySummary(data);
+    } catch {
+      // fail silently
+    } finally {
+      setCategoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCategorySummary(selectedMonth);
+  }, [selectedMonth, loadCategorySummary]);
+
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
+  const currentMonth = currentMonthValue();
+  const selectedSummary = monthlySummary.find((m) => m.month === selectedMonth);
+  const totalForMonth = selectedSummary?.total ?? 0;
+  const countForMonth = selectedSummary?.count ?? 0;
 
-  // Stats: total this month
-  const now = new Date();
-  const thisMonthExpenses = expenses.filter((e) => {
-    const d = new Date(e.date);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
+  const isCurrentMonth = selectedMonth === currentMonth;
+  const oldestAvailable = monthlySummary[0]?.month;
+  const atOldest = oldestAvailable ? selectedMonth <= oldestAvailable : false;
 
-  const totalThisMonth = thisMonthExpenses.reduce(
-    (sum, e) => sum + parseFloat(e.amount || "0"),
-    0
-  );
+  function lastDayOfMonth(yyyymm: string): string {
+    const [year, month] = yyyymm.split("-").map(Number);
+    const last = new Date(year, month, 0).getDate();
+    return `${yyyymm}-${String(last).padStart(2, "0")}`;
+  }
 
-  const currencySymbol = user?.homeCurrency || "USD";
-
-  function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencySymbol,
-      minimumFractionDigits: 2,
-    }).format(amount);
+  async function handleExportCsv() {
+    setCsvLoading(true);
+    try {
+      await downloadCsvApi(`${csvStart}-01`, lastDayOfMonth(csvEnd));
+    } catch {
+      // fail silently
+    } finally {
+      setCsvLoading(false);
+    }
   }
 
   return (
@@ -104,8 +191,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          {getGreeting()}, {user?.name || user?.email?.split("@")[0] || "there"}{" "}
-          👋
+          {getGreeting()},{" "}
+          {user?.name || user?.email?.split("@")[0] || "there"} 👋
         </h1>
         <p className="text-gray-500 text-sm mt-1">
           Here&apos;s your expense overview
@@ -126,58 +213,145 @@ export default function DashboardPage() {
               </p>
             </div>
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <svg
-                className="w-9 h-9 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                />
+              <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
           </div>
         </div>
       </Link>
 
+      <div className="text-center -mt-3">
+        <Link href="/expenses?add=1" className="text-sm text-gray-400 hover:text-gray-600">
+          or <span className="underline">add manually</span>
+        </Link>
+      </div>
+
+      {/* Month selector */}
+      <div className="flex items-center justify-between bg-white rounded-2xl shadow-sm px-4 py-3">
+        <button
+          onClick={() => setSelectedMonth(prevMonth(selectedMonth))}
+          disabled={atOldest}
+          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          aria-label="Previous month"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <div className="text-center">
+          <p className="font-semibold text-gray-900">{monthLabel(selectedMonth)}</p>
+          {!isCurrentMonth && (
+            <button
+              onClick={() => setSelectedMonth(currentMonth)}
+              className="text-xs text-indigo-600 hover:underline mt-0.5"
+            >
+              Back to current
+            </button>
+          )}
+        </div>
+        <button
+          onClick={() => setSelectedMonth(nextMonth(selectedMonth))}
+          disabled={isCurrentMonth}
+          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          aria-label="Next month"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3">
         <StatCard
-          label="Total this month"
-          value={formatCurrency(totalThisMonth)}
-          loading={loading}
+          label="Total spent"
+          value={formatCurrency(totalForMonth)}
+          loading={summaryLoading}
         />
         <StatCard
-          label="Receipts this month"
-          value={String(thisMonthExpenses.length)}
-          loading={loading}
+          label="Expenses"
+          value={String(countForMonth)}
+          loading={summaryLoading}
         />
+      </div>
+
+      {/* Monthly Spend Trend */}
+      <div className="bg-white rounded-2xl shadow-sm p-4">
+        <h2 className="text-base font-semibold text-gray-900 mb-4">
+          Monthly Trend
+        </h2>
+        {summaryLoading ? (
+          <ChartSkeleton />
+        ) : (
+          <MonthlyChart
+            data={monthlySummary}
+            currency={currencyCode}
+            selectedMonth={selectedMonth}
+            onBarClick={(month) => setSelectedMonth(month)}
+          />
+        )}
+      </div>
+
+      {/* Category Breakdown */}
+      <div className="bg-white rounded-2xl shadow-sm p-4">
+        <h2 className="text-base font-semibold text-gray-900 mb-1">
+          {monthLabel(selectedMonth)} by Category
+        </h2>
+        {categoryLoading ? (
+          <ChartSkeleton />
+        ) : (
+          <CategoryChart data={categorySummary} currency={currencyCode} />
+        )}
+      </div>
+
+      {/* CSV Export */}
+      <div className="bg-white rounded-2xl shadow-sm p-4">
+        <div className="mb-3">
+          <h2 className="text-base font-semibold text-gray-900">Export CSV</h2>
+          <p className="text-xs text-gray-400 mt-0.5">Select a date range to export</p>
+        </div>
+        <div className="flex gap-2 mb-3">
+          <div className="flex-1">
+            <label className="text-xs text-gray-500 mb-1 block">From</label>
+            <input
+              type="month"
+              value={csvStart}
+              onChange={(e) => setCsvStart(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="text-xs text-gray-500 mb-1 block">To</label>
+            <input
+              type="month"
+              value={csvEnd}
+              onChange={(e) => setCsvEnd(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        </div>
+        <button
+          onClick={handleExportCsv}
+          disabled={csvLoading}
+          className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 disabled:opacity-50 text-white text-sm font-medium rounded-xl py-2.5 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+          </svg>
+          {csvLoading ? "Preparing…" : "Download CSV"}
+        </button>
       </div>
 
       {/* Recent Expenses */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Recent Expenses
-          </h2>
-          <Link
-            href="/expenses"
-            className="text-sm text-indigo-600 hover:underline font-medium"
-          >
+          <h2 className="text-lg font-semibold text-gray-900">Recent Expenses</h2>
+          <Link href="/expenses" className="text-sm text-indigo-600 hover:underline font-medium">
             View all
           </Link>
         </div>
-
         <div className="flex flex-col gap-2">
           {loading ? (
             <>
@@ -198,11 +372,7 @@ export default function DashboardPage() {
               <ExpenseCard
                 key={expense.id}
                 expense={expense}
-                category={
-                  expense.categoryId
-                    ? categoryMap.get(expense.categoryId)
-                    : undefined
-                }
+                category={expense.categoryId ? categoryMap.get(expense.categoryId) : undefined}
               />
             ))
           )}

@@ -45,3 +45,17 @@ export interface PaginatedResponse<T> {
   page: number;
   limit: number;
 }
+
+export interface MonthlySummary {
+  month: string; // "YYYY-MM"
+  total: number;
+  count: number;
+}
+
+export interface CategorySummary {
+  categoryId: string | null;
+  name: string;
+  color: string;
+  icon: string | null;
+  total: number;
+}

@@ -1,5 +1,5 @@
 import { get, post, patch, del } from "@/lib/api";
-import { Expense, ExpenseDraft, PaginatedResponse } from "@/types";
+import { Expense, ExpenseDraft, MonthlySummary, CategorySummary, PaginatedResponse } from "@/types";
 import axiosInstance from "@/lib/api";
 
 export interface ScanReceiptResponse extends ExpenseDraft {
@@ -74,4 +74,51 @@ export async function updateExpenseApi(
 
 export async function deleteExpenseApi(id: string): Promise<void> {
   return del<void>(`/expenses/${id}`);
+}
+
+export async function uploadReceiptApi(
+  file: File
+): Promise<{ receiptImageKey: string; receiptImageUrl: string }> {
+  const formData = new FormData();
+  formData.append("receipt", file);
+  const response = await axiosInstance.post<{
+    receiptImageKey: string;
+    receiptImageUrl: string;
+  }>("/expenses/upload-receipt", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+}
+
+export async function getMonthlySummaryApi(): Promise<MonthlySummary[]> {
+  return get<MonthlySummary[]>("/expenses/summary/monthly");
+}
+
+export async function getCategorySummaryApi(
+  month: string
+): Promise<CategorySummary[]> {
+  return get<CategorySummary[]>("/expenses/summary/categories", {
+    params: { month },
+  });
+}
+
+export async function downloadCsvApi(
+  startDate?: string,
+  endDate?: string
+): Promise<void> {
+  const params: Record<string, string> = {};
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
+
+  const response = await axiosInstance.get("/expenses/export/csv", {
+    params,
+    responseType: "blob",
+  });
+
+  const url = URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `expenses-${new Date().toISOString().split("T")[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
