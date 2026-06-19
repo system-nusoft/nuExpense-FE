@@ -13,6 +13,7 @@ export interface Category {
   color: string;
   icon?: string;
   sortOrder: number;
+  budgetAmount?: string | null;
 }
 
 export interface Expense {
@@ -27,6 +28,8 @@ export interface Expense {
   notes?: string;
   rawAiResponse?: unknown;
   createdAt: string;
+  homeCurrencyAmount?: string;
+  homeCurrencyCode?: string;
 }
 
 export interface ExpenseDraft {
@@ -58,4 +61,5 @@ export interface CategorySummary {
   color: string;
   icon: string | null;
   total: number;
+  budgetAmount: number | null;
 }

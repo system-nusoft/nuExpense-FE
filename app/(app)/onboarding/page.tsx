@@ -6,7 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { updateMeApi } from "@/lib/services/auth.service";
 import { getCategoriesApi } from "@/lib/services/categories.service";
 import { Category } from "@/types";
-import Input from "@/components/Input";
+import { CURRENCY_OPTIONS } from "@/lib/currencies";
+import Select from "@/components/Select";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 
@@ -23,12 +24,12 @@ export default function OnboardingPage() {
 
   async function handleCurrencyNext(e: React.FormEvent) {
     e.preventDefault();
-    if (!currency.trim()) return;
+    if (!currency) return;
 
     setSaving(true);
     setError(null);
     try {
-      const updated = await updateMeApi({ homeCurrency: currency.trim().toUpperCase() });
+      const updated = await updateMeApi({ homeCurrency: currency });
       updateUser(updated);
 
       // Load categories for step 2
@@ -88,38 +89,14 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              <Input
-                label="Currency Code"
+              <Select
+                label="Currency"
                 value={currency}
-                onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                placeholder="USD"
-                hint="3-letter ISO code, e.g. USD, EUR, GBP, PKR"
+                onChange={(e) => setCurrency(e.target.value)}
+                options={CURRENCY_OPTIONS}
                 required
                 disabled={saving}
               />
-
-              {/* Common currencies */}
-              <div>
-                <p className="text-xs text-gray-500 mb-2">Common currencies:</p>
-                <div className="flex flex-wrap gap-2">
-                  {["USD", "EUR", "GBP", "PKR", "AED", "CAD", "AUD", "INR"].map(
-                    (c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setCurrency(c)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                          currency === c
-                            ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                            : "border-gray-200 text-gray-600 hover:border-gray-400"
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    )
-                  )}
-                </div>
-              </div>
 
               <Button type="submit" loading={saving} className="w-full mt-2">
                 Continue

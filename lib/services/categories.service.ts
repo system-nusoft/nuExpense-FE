@@ -5,6 +5,7 @@ export interface CreateCategoryPayload {
   name: string;
   color: string;
   icon?: string;
+  budgetAmount?: number | null;
 }
 
 export interface UpdateCategoryPayload extends Partial<CreateCategoryPayload> {}

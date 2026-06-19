@@ -35,6 +35,11 @@ export default function CategoryListItem({
       {/* Info */}
       <div className="flex-1 min-w-0">
         <p className="font-medium text-gray-900 text-sm">{category.name}</p>
+        {category.budgetAmount && (
+          <p className="text-xs text-gray-400 mt-0.5">
+            Budget: {Number(category.budgetAmount).toLocaleString()} / month
+          </p>
+        )}
       </div>
 
       {/* Actions */}

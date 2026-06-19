@@ -26,6 +26,7 @@ interface CategoryFormData {
   name: string;
   color: string;
   icon?: string;
+  budgetAmount?: number | null;
 }
 
 interface CategoryFormProps {
@@ -44,6 +45,9 @@ export default function CategoryForm({
   const [name, setName] = useState(initial?.name || "");
   const [color, setColor] = useState(initial?.color || PRESET_COLORS[0]);
   const [icon, setIcon] = useState(initial?.icon || "");
+  const [budgetAmount, setBudgetAmount] = useState(
+    initial?.budgetAmount ? String(initial.budgetAmount) : ""
+  );
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
@@ -53,7 +57,12 @@ export default function CategoryForm({
       setError("Category name is required.");
       return;
     }
-    onSave({ name: name.trim(), color, icon: icon || undefined });
+    const parsed = budgetAmount ? parseFloat(budgetAmount) : null;
+    if (budgetAmount && (isNaN(parsed!) || parsed! <= 0)) {
+      setError("Budget must be a positive number.");
+      return;
+    }
+    onSave({ name: name.trim(), color, icon: icon || undefined, budgetAmount: parsed });
   }
 
   return (
@@ -147,6 +156,24 @@ export default function CategoryForm({
             None
           </button>
         </div>
+      </div>
+
+      {/* Monthly budget */}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-gray-700">
+          Monthly Budget <span className="text-gray-400 font-normal">(optional)</span>
+        </label>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          value={budgetAmount}
+          onChange={(e) => setBudgetAmount(e.target.value)}
+          placeholder="e.g. 50000"
+          disabled={loading}
+          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+        />
+        <p className="text-xs text-gray-400">Set a monthly spend limit for this category</p>
       </div>
 
       <div className="flex gap-3 pt-1">

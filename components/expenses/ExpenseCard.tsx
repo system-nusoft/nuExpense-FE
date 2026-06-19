@@ -69,6 +69,13 @@ export default function ExpenseCard({
             <p className="font-semibold text-gray-900 text-sm">
               {formatAmount(expense.amount, expense.currency)}
             </p>
+            {expense.homeCurrencyCode &&
+              expense.homeCurrencyCode !== expense.currency &&
+              expense.homeCurrencyAmount && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  ≈ {formatAmount(expense.homeCurrencyAmount, expense.homeCurrencyCode)}
+                </p>
+              )}
             {expense.receiptImageUrl && (
               <a
                 href={expense.receiptImageUrl}
