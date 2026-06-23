@@ -1,5 +1,5 @@
 import { get, post, patch, del } from "@/lib/api";
-import { Expense, ExpenseDraft, MonthlySummary, CategorySummary, PaginatedResponse } from "@/types";
+import { Expense, ExpenseDraft, MonthlySummary, CategorySummary, VendorInsight, PaginatedResponse } from "@/types";
 import axiosInstance from "@/lib/api";
 
 export interface ScanReceiptResponse extends ExpenseDraft {
@@ -100,6 +100,14 @@ export async function getCategorySummaryApi(
   return get<CategorySummary[]>("/expenses/summary/categories", {
     params: { month },
   });
+}
+
+export async function getMonthlyRecapApi(month: string): Promise<{ recap: string }> {
+  return get<{ recap: string }>("/expenses/recap", { params: { month } });
+}
+
+export async function getVendorInsightsApi(): Promise<VendorInsight[]> {
+  return get<VendorInsight[]>("/expenses/vendors/insights");
 }
 
 export async function downloadCsvApi(

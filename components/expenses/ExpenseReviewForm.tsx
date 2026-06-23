@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createExpenseApi } from "@/lib/services/expenses.service";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import { CURRENCY_OPTIONS } from "@/lib/currencies";
 import Button from "@/components/Button";
 
 interface ExpenseReviewFormProps {
@@ -131,12 +132,12 @@ export default function ExpenseReviewForm({
             required
             disabled={loading}
           />
-          <Input
+          <Select
             label="Currency"
             name="currency"
             value={currency}
-            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            placeholder="USD"
+            onChange={(e) => setCurrency(e.target.value)}
+            options={CURRENCY_OPTIONS}
             required
             disabled={loading}
           />

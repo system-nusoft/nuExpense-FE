@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "nuExpense — AI-Powered Expense Tracking",
+  title: "Zingg — AI-Powered Expense Tracking",
   description:
     "Scan receipts instantly with AI. Track expenses, manage categories, and understand your spending.",
 };

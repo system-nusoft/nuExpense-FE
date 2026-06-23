@@ -49,6 +49,14 @@ export interface PaginatedResponse<T> {
   limit: number;
 }
 
+export interface VendorInsight {
+  name: string;
+  count: number;
+  total: number;
+  average: number;
+  lastDate: string;
+}
+
 export interface MonthlySummary {
   month: string; // "YYYY-MM"
   total: number;

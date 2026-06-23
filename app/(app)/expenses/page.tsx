@@ -22,6 +22,7 @@ import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
+import { CURRENCY_OPTIONS } from "@/lib/currencies";
 import Spinner from "@/components/Spinner";
 
 const PAGE_SIZE = 20;
@@ -272,9 +273,6 @@ export default function ExpensesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {total} expense{total !== 1 ? "s" : ""} total
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={openAdd}>
@@ -416,10 +414,11 @@ export default function ExpensesPage() {
               placeholder="0.00"
               disabled={addLoading}
             />
-            <Input
+            <Select
               label="Currency"
               value={addCurrency}
-              onChange={(e) => setAddCurrency(e.target.value.toUpperCase())}
+              onChange={(e) => setAddCurrency(e.target.value)}
+              options={CURRENCY_OPTIONS}
               disabled={addLoading}
             />
           </div>
@@ -555,10 +554,11 @@ export default function ExpensesPage() {
                 onChange={(e) => setEditAmount(e.target.value)}
                 disabled={editLoading}
               />
-              <Input
+              <Select
                 label="Currency"
                 value={editCurrency}
-                onChange={(e) => setEditCurrency(e.target.value.toUpperCase())}
+                onChange={(e) => setEditCurrency(e.target.value)}
+                options={CURRENCY_OPTIONS}
                 disabled={editLoading}
               />
             </div>

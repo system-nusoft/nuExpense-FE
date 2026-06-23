@@ -55,9 +55,9 @@ export default function Navbar() {
               className="flex items-center gap-2 font-bold text-indigo-600 text-xl"
             >
               <span className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-extrabold">
-                n
+                Z
               </span>
-              nuExpense
+              Zingg
             </Link>
 
             {/* Desktop nav */}
@@ -154,7 +154,7 @@ export default function Navbar() {
           {/* Drawer */}
           <div className="relative w-72 max-w-full bg-white h-full flex flex-col shadow-xl">
             <div className="px-4 py-6 border-b border-gray-100">
-              <p className="font-bold text-indigo-600 text-lg">nuExpense</p>
+              <p className="font-bold text-indigo-600 text-lg">Zingg</p>
             </div>
             <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (

@@ -1,7 +1,7 @@
 import LoginForm from "@/components/auth/LoginForm";
 
 export const metadata = {
-  title: "Sign In — nuExpense",
+  title: "Sign In — Zingg",
 };
 
 export default function LoginPage() {
@@ -11,9 +11,9 @@ export default function LoginPage() {
         {/* Logo / Hero */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 text-white rounded-2xl text-2xl font-extrabold mb-4 shadow-lg">
-            n
+            Z
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">nuExpense</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Zingg</h1>
           <p className="text-gray-500 text-sm mt-1">
             AI-powered expense tracking
           </p>
