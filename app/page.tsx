@@ -55,7 +55,7 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="flex items-center justify-between px-6 py-3.5 max-w-6xl mx-auto">
-          <Image src="/logo-with-name.png" alt="Zingg" width={1129} height={90} className="h-10 w-auto" priority />
+          <Image src="/logo-with-name.png" alt="Zingg" width={1129} height={90} className="h-10 w-auto" style={{ width: 'auto' }} priority />
           <Link
             href="/signup"
             className="text-sm font-semibold bg-[#3e6378] text-white px-4 py-2 rounded-lg hover:bg-[#325163] transition-colors"
@@ -86,7 +86,7 @@ export default function LandingPage() {
               Zingg reads your receipts with AI, sorts every expense into a category and
               budget, and shows you exactly where your money goes — automatically.
             </p>
-            <div className="flex flex-col sm:flex-row items-start gap-3 mb-10">
+            <div className="flex flex-col sm:flex-row items-start gap-3 mb-6">
               <Link
                 href="/signup"
                 className="inline-flex items-center justify-center gap-2 bg-[#3e6378] text-white font-bold px-7 py-3.5 rounded-xl hover:bg-[#325163] transition-colors text-base shadow-lg shadow-[#3e6378]/20"
@@ -100,6 +100,19 @@ export default function LandingPage() {
               >
                 Sign in
               </Link>
+            </div>
+            <div className="flex flex-col gap-2 mb-10">
+              <span className="text-sm font-medium text-gray-600">Download the app</span>
+              <div className="flex items-center gap-3">
+                <button disabled className="rounded-md border border-gray-400 cursor-not-allowed">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/app-store.svg" alt="Download on the App Store" className="h-10 w-auto" />
+                </button>
+                <button disabled className="cursor-not-allowed">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/google-play.webp" alt="Get it on Google Play" className="h-10 w-auto" />
+                </button>
+              </div>
             </div>
           </div>
 
