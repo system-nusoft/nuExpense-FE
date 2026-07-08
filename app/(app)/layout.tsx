@@ -21,7 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-3">
-          <Spinner size="lg" className="text-indigo-600" />
+          <Spinner size="lg" className="text-[#3e6378]" />
           <p className="text-sm text-gray-500">Loading...</p>
         </div>
       </div>
@@ -31,7 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Spinner size="lg" className="text-indigo-600" />
+        <Spinner size="lg" className="text-[#3e6378]" />
       </div>
     );
   }

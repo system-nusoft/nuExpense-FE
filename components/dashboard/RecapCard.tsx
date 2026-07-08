@@ -33,7 +33,7 @@ export default function RecapCard({ month, monthLabel }: Props) {
           <h2 className="text-base font-semibold text-gray-900">AI Monthly Recap</h2>
           <p className="text-xs text-gray-400 mt-0.5">{monthLabel}</p>
         </div>
-        <span className="text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
+        <span className="text-xs font-medium bg-[#eef2f5] text-[#3e6378] px-2 py-1 rounded-full">
           AI
         </span>
       </div>
@@ -44,7 +44,7 @@ export default function RecapCard({ month, monthLabel }: Props) {
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="mt-3 text-xs text-indigo-600 hover:underline disabled:opacity-50"
+            className="mt-3 text-xs text-[#3e6378] hover:underline disabled:opacity-50"
           >
             {loading ? "Regenerating…" : "Regenerate"}
           </button>
@@ -57,7 +57,7 @@ export default function RecapCard({ month, monthLabel }: Props) {
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-medium rounded-xl px-4 py-2 transition-colors"
+            className="flex items-center gap-2 bg-[#3e6378] hover:bg-[#325163] disabled:opacity-50 text-white text-sm font-medium rounded-xl px-4 py-2 transition-colors"
           >
             {loading ? (
               <>

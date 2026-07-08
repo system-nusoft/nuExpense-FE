@@ -189,12 +189,12 @@ export default function DashboardPage() {
 
       {/* Scan CTA */}
       <Link href="/scan">
-        <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl p-5 text-white cursor-pointer hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-lg active:scale-[0.99]">
+        <div className="bg-gradient-to-br from-[#3e6378] to-[#325163] rounded-2xl p-5 text-white cursor-pointer hover:from-[#325163] hover:to-[#263e4e] transition-all shadow-lg active:scale-[0.99]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-indigo-200 text-xs font-medium mb-1">AI Receipt Scanner</p>
+              <p className="text-[#abc5d5] text-xs font-medium mb-1">AI Receipt Scanner</p>
               <h2 className="text-xl font-bold">Scan a Receipt</h2>
-              <p className="text-indigo-200 text-xs mt-1">Upload a photo, let AI extract the details</p>
+              <p className="text-[#abc5d5] text-xs mt-1">Upload a photo, let AI extract the details</p>
             </div>
             <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,7 +248,7 @@ export default function DashboardPage() {
               {!isCurrentMonth && (
                 <button
                   onClick={() => setSelectedMonth(currentMonth)}
-                  className="text-xs text-indigo-600 hover:underline mt-0.5"
+                  className="text-xs text-[#3e6378] hover:underline mt-0.5"
                 >
                   Back to current
                 </button>
@@ -330,7 +330,7 @@ export default function DashboardPage() {
                 type="month"
                 value={csvStart}
                 onChange={(e) => setCsvStart(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a]"
               />
             </div>
             <div className="flex-1">
@@ -339,7 +339,7 @@ export default function DashboardPage() {
                 type="month"
                 value={csvEnd}
                 onChange={(e) => setCsvEnd(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a]"
               />
             </div>
           </div>

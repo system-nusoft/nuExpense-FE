@@ -103,7 +103,7 @@ export default function ExpenseReviewForm({
         )}
 
         {draft.confidence !== undefined && (
-          <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2 text-xs text-indigo-700">
+          <div className="bg-[#eef2f5] border border-[#d5e2ea] rounded-lg px-3 py-2 text-xs text-[#325163]">
             AI confidence: {Math.round(draft.confidence * 100)}% — please review
             and correct if needed.
           </div>
@@ -173,7 +173,7 @@ export default function ExpenseReviewForm({
             placeholder="Any additional notes..."
             rows={3}
             disabled={loading}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] focus:border-[#4a7a9a] disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
           />
         </div>
 

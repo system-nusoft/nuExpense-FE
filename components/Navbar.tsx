@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,14 +51,8 @@ export default function Navbar() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 font-bold text-indigo-600 text-xl"
-            >
-              <span className="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-extrabold">
-                Z
-              </span>
-              Zingg
+            <Link href="/dashboard" className="flex items-center">
+              <Image src="/logo-with-name.png" alt="Zingg" width={135} height={90} className="h-20 w-auto" priority />
             </Link>
 
             {/* Desktop nav */}
@@ -68,7 +63,7 @@ export default function Navbar() {
                   href={link.href}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     pathname === link.href || pathname.startsWith(link.href + "/")
-                      ? "bg-indigo-50 text-indigo-700"
+                      ? "bg-[#eef2f5] text-[#325163]"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
@@ -83,7 +78,7 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((prev) => !prev)}
-                  className="w-9 h-9 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="w-9 h-9 bg-[#3e6378] text-white rounded-full flex items-center justify-center font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] focus:ring-offset-2"
                   aria-label="User menu"
                 >
                   {userInitial}
@@ -154,7 +149,7 @@ export default function Navbar() {
           {/* Drawer */}
           <div className="relative w-72 max-w-full bg-white h-full flex flex-col shadow-xl">
             <div className="px-4 py-6 border-b border-gray-100">
-              <p className="font-bold text-indigo-600 text-lg">Zingg</p>
+              <p className="font-bold text-[#3e6378] text-lg">Zingg</p>
             </div>
             <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -163,7 +158,7 @@ export default function Navbar() {
                   href={link.href}
                   className={`flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
                     pathname === link.href
-                      ? "bg-indigo-50 text-indigo-700"
+                      ? "bg-[#eef2f5] text-[#325163]"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >

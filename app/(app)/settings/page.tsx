@@ -129,7 +129,7 @@ export default function SettingsPage() {
             className={`
               inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
               ${user?.isPremium
-                ? "bg-indigo-100 text-indigo-700"
+                ? "bg-[#d5e2ea] text-[#325163]"
                 : "bg-gray-100 text-gray-600"
               }
             `}

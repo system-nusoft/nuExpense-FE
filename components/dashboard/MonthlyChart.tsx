@@ -79,7 +79,7 @@ export default function MonthlyChart({ data, currency, selectedMonth, onBarClick
           {chartData.map((entry, i) => (
             <Cell
               key={i}
-              fill={entry.rawMonth === selectedMonth ? "#4338ca" : "#6366f1"}
+              fill={entry.rawMonth === selectedMonth ? "#325163" : "#3e6378"}
               opacity={selectedMonth && entry.rawMonth !== selectedMonth ? 0.5 : 1}
             />
           ))}

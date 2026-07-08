@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import LoginForm from "@/components/auth/LoginForm";
 
 export const metadata = {
@@ -8,12 +10,23 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors mb-6"
+        >
+          <span>←</span> Back
+        </Link>
+
         {/* Logo / Hero */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 text-white rounded-2xl text-2xl font-extrabold mb-4 shadow-lg">
-            Z
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">Zingg</h1>
+          <Image
+            src="/logo-with-name.png"
+            alt="Zingg"
+            width={225}
+            height={150}
+            className="h-16 w-auto mx-auto mb-3"
+            priority
+          />
           <p className="text-gray-500 text-sm mt-1">
             AI-powered expense tracking
           </p>
