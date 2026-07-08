@@ -52,7 +52,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/dashboard" className="flex items-center">
-              <Image src="/logo-with-name.png" alt="Zingg" width={135} height={90} className="h-20 w-auto" priority />
+              <Image src="/logo-with-name.png" alt="Zingg" width={1129} height={382} className="h-10 w-auto" priority />
             </Link>
 
             {/* Desktop nav */}
