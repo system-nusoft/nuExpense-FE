@@ -129,7 +129,7 @@ export default function CategoriesPage() {
       {/* List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Spinner size="lg" className="text-indigo-600" />
+          <Spinner size="lg" className="text-[#3e6378]" />
         </div>
       ) : categories.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">

@@ -104,8 +104,8 @@ export default function FileDropzone({
           transition-colors p-6 text-center
           ${
             dragOver
-              ? "border-indigo-500 bg-indigo-50"
-              : "border-gray-300 bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50/50"
+              ? "border-[#4a7a9a] bg-[#eef2f5]"
+              : "border-gray-300 bg-gray-50 hover:border-[#578bab] hover:bg-[#eef2f5]/50"
           }
         `}
       >
@@ -128,15 +128,15 @@ export default function FileDropzone({
             <p className="text-xs text-gray-500 truncate max-w-full">
               {fileName}
             </p>
-            <p className="text-xs text-indigo-600 font-medium">
+            <p className="text-xs text-[#3e6378] font-medium">
               Click or drag to replace
             </p>
           </div>
         ) : (
           <>
-            <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-3">
+            <div className="w-12 h-12 rounded-full bg-[#d5e2ea] flex items-center justify-center mb-3">
               <svg
-                className="w-6 h-6 text-indigo-600"
+                className="w-6 h-6 text-[#3e6378]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -154,7 +154,7 @@ export default function FileDropzone({
             </p>
             <p className="text-xs text-gray-500 mt-1">
               or{" "}
-              <span className="text-indigo-600 font-medium">
+              <span className="text-[#3e6378] font-medium">
                 click to browse
               </span>
             </p>

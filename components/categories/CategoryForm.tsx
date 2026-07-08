@@ -6,7 +6,7 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 
 const PRESET_COLORS = [
-  "#6366f1", // indigo
+  "#6366f1", // blue
   "#ec4899", // pink
   "#f97316", // orange
   "#eab308", // yellow
@@ -136,7 +136,7 @@ export default function CategoryForm({
               onClick={() => setIcon(ic === icon ? "" : ic)}
               className={`w-10 h-10 rounded-lg border-2 text-lg transition-all ${
                 icon === ic
-                  ? "border-indigo-500 bg-indigo-50"
+                  ? "border-[#4a7a9a] bg-[#eef2f5]"
                   : "border-gray-200 hover:border-gray-400"
               }`}
               aria-label={`Select icon ${ic}`}
@@ -149,7 +149,7 @@ export default function CategoryForm({
             onClick={() => setIcon("")}
             className={`px-3 h-10 rounded-lg border-2 text-xs transition-all ${
               !icon
-                ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                ? "border-[#4a7a9a] bg-[#eef2f5] text-[#325163]"
                 : "border-gray-200 text-gray-500 hover:border-gray-400"
             }`}
           >
@@ -171,7 +171,7 @@ export default function CategoryForm({
           onChange={(e) => setBudgetAmount(e.target.value)}
           placeholder="e.g. 50000"
           disabled={loading}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] disabled:bg-gray-50 disabled:text-gray-400"
         />
         <p className="text-xs text-gray-400">Set a monthly spend limit for this category</p>
       </div>

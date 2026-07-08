@@ -69,7 +69,7 @@ export default function OtpInput({
 
   const borderClass = error
     ? "border-red-400 focus:ring-red-400"
-    : "border-gray-300 focus:ring-indigo-500";
+    : "border-gray-300 focus:ring-[#4a7a9a]";
 
   return (
     <div className="flex gap-2 justify-center" onPaste={handlePaste}>

@@ -307,7 +307,7 @@ export default function ExpensesPage() {
       <div>
         <button
           onClick={() => setFiltersOpen((prev) => !prev)}
-          className="flex items-center gap-2 text-sm text-indigo-600 font-medium hover:text-indigo-700"
+          className="flex items-center gap-2 text-sm text-[#3e6378] font-medium hover:text-[#325163]"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -443,7 +443,7 @@ export default function ExpensesPage() {
               onChange={(e) => setAddNotes(e.target.value)}
               rows={2}
               disabled={addLoading}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 resize-none"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] disabled:bg-gray-100 resize-none"
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -466,7 +466,7 @@ export default function ExpensesPage() {
                 </label>
               </div>
             ) : (
-              <label className="cursor-pointer flex items-center gap-2 border border-dashed border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition-colors w-fit">
+              <label className="cursor-pointer flex items-center gap-2 border border-dashed border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 hover:border-[#578bab] hover:text-[#3e6378] transition-colors w-fit">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
@@ -511,7 +511,7 @@ export default function ExpensesPage() {
                     href={editExpense.receiptImageUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                    className="text-sm text-[#3e6378] hover:text-[#263e4e] font-medium"
                   >
                     View current
                   </a>
@@ -583,7 +583,7 @@ export default function ExpensesPage() {
                 onChange={(e) => setEditNotes(e.target.value)}
                 rows={2}
                 disabled={editLoading}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 resize-none"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] disabled:bg-gray-100 resize-none"
               />
             </div>
             <div className="flex gap-3">
