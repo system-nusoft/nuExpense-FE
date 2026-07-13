@@ -40,7 +40,15 @@ export default function RecapCard({ month, monthLabel }: Props) {
 
       {recap ? (
         <div>
-          <p className="text-sm text-gray-700 leading-relaxed">{recap}</p>
+          <ul className="list-disc list-inside space-y-1.5 text-sm text-gray-700 leading-relaxed">
+            {recap
+              .split("\n")
+              .map((line) => line.trim())
+              .filter((line) => line.length > 0)
+              .map((line, i) => (
+                <li key={i}>{line}</li>
+              ))}
+          </ul>
           <button
             onClick={handleGenerate}
             disabled={loading}

@@ -18,6 +18,7 @@ import ExpenseCard from "@/components/expenses/ExpenseCard";
 import ExpenseFilters, {
   FilterState,
 } from "@/components/expenses/ExpenseFilters";
+import DateRangeComparison from "@/components/expenses/DateRangeComparison";
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
@@ -57,6 +58,7 @@ export default function ExpensesPage() {
     endDate: "",
   });
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState(
     successParam ? "Expense saved successfully!" : null
   );
@@ -303,8 +305,8 @@ export default function ExpensesPage() {
         </div>
       )}
 
-      {/* Filters toggle */}
-      <div>
+      {/* Filters & Compare toggles */}
+      <div className="flex items-center gap-5">
         <button
           onClick={() => setFiltersOpen((prev) => !prev)}
           className="flex items-center gap-2 text-sm text-[#3e6378] font-medium hover:text-[#325163]"
@@ -315,19 +317,31 @@ export default function ExpensesPage() {
           {filtersOpen ? "Hide Filters" : "Show Filters"}
         </button>
 
-        {filtersOpen && (
-          <div className="mt-3">
-            <ExpenseFilters
-              categories={categories}
-              value={filters}
-              onChange={(f) => {
-                setFilters(f);
-                setPage(1);
-              }}
-            />
-          </div>
-        )}
+        <button
+          onClick={() => setCompareOpen((prev) => !prev)}
+          className="flex items-center gap-2 text-sm text-[#3e6378] font-medium hover:text-[#325163]"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0a2 2 0 002 2h2a2 2 0 002-2v-3a2 2 0 00-2-2h-2a2 2 0 00-2 2z" />
+          </svg>
+          {compareOpen ? "Hide Compare" : "Compare Date Ranges"}
+        </button>
       </div>
+
+      {filtersOpen && (
+        <ExpenseFilters
+          categories={categories}
+          value={filters}
+          onChange={(f) => {
+            setFilters(f);
+            setPage(1);
+          }}
+        />
+      )}
+
+      {compareOpen && (
+        <DateRangeComparison currency={user?.homeCurrency || "USD"} />
+      )}
 
       {/* Expense list */}
       <div className="flex flex-col gap-2">

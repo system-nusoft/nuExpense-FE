@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { CategorySummary } from "@/types";
 
@@ -17,6 +18,7 @@ export default function CategoryChart({ data, currency }: Props) {
     }).format(v);
 
   const total = data.reduce((s, d) => s + d.total, 0);
+  const hasAnyBudget = data.some((d) => d.budgetAmount);
 
   if (data.length === 0) {
     return (
@@ -28,6 +30,20 @@ export default function CategoryChart({ data, currency }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
+      {!hasAnyBudget && (
+        <Link
+          href="/categories"
+          className="flex items-center gap-3 bg-[#eef2f5] hover:bg-[#e3ebef] rounded-xl px-3 py-2.5 transition-colors"
+        >
+          <span className="text-lg flex-shrink-0">🎯</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-[#263e4e]">No budgets set yet</p>
+            <p className="text-xs text-[#3e6378]">
+              Set a monthly budget per category to see how close you are to your limit →
+            </p>
+          </div>
+        </Link>
+      )}
       <ResponsiveContainer width="100%" height={180}>
         <PieChart>
           <Pie
