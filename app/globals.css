@@ -18,3 +18,7 @@ html {
   outline: 2px solid #3e6378;
   outline-offset: 2px;
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}

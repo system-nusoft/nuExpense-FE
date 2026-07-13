@@ -71,3 +71,11 @@ export interface CategorySummary {
   total: number;
   budgetAmount: number | null;
 }
+
+export interface DateRangeComparisonRow {
+  month: string; // "YYYY-MM"
+  rangeStart: string; // "YYYY-MM-DD"
+  rangeEnd: string; // "YYYY-MM-DD"
+  total: number;
+  count: number;
+}

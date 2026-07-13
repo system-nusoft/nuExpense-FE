@@ -1,5 +1,5 @@
 import { get, post, patch, del } from "@/lib/api";
-import { Expense, ExpenseDraft, MonthlySummary, CategorySummary, VendorInsight, PaginatedResponse } from "@/types";
+import { Expense, ExpenseDraft, MonthlySummary, CategorySummary, VendorInsight, DateRangeComparisonRow, PaginatedResponse } from "@/types";
 import axiosInstance from "@/lib/api";
 
 export interface ScanReceiptResponse extends ExpenseDraft {
@@ -108,6 +108,28 @@ export async function getMonthlyRecapApi(month: string): Promise<{ recap: string
 
 export async function getVendorInsightsApi(): Promise<VendorInsight[]> {
   return get<VendorInsight[]>("/expenses/vendors/insights");
+}
+
+export interface DateRangeComparisonParams {
+  startDay: number;
+  endDay: number;
+  months?: number;
+  referenceMonth?: string;
+}
+
+export async function getDateRangeComparisonApi(
+  params: DateRangeComparisonParams
+): Promise<DateRangeComparisonRow[]> {
+  const queryParams: Record<string, string> = {
+    startDay: String(params.startDay),
+    endDay: String(params.endDay),
+    months: String(params.months ?? 6),
+  };
+  if (params.referenceMonth) queryParams.referenceMonth = params.referenceMonth;
+
+  return get<DateRangeComparisonRow[]>("/expenses/compare/date-range", {
+    params: queryParams,
+  });
 }
 
 export async function downloadCsvApi(

@@ -78,9 +78,9 @@ export default function LandingPage() {
               AI-powered expense tracking
             </div>
             <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-900 leading-[1.05] tracking-tight mb-6">
-              Scan, categorize,
+              No more
               <br />
-              <span className="text-[#3e6378]">done.</span>
+              <span className="text-[#3e6378]">money mysteries.</span>
             </h1>
             <p className="text-lg text-gray-500 max-w-md mb-10 leading-relaxed">
               Zingg reads your receipts with AI, sorts every expense into a category and
