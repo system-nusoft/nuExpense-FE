@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getCategoriesApi,
   createCategoryApi,
@@ -15,6 +16,7 @@ import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 
 export default function CategoriesPage() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export default function CategoriesPage() {
       const cats = await getCategoriesApi();
       setCategories(cats.sort((a, b) => a.sortOrder - b.sortOrder));
     } catch {
-      setError("Failed to load categories.");
+      setError(t("categories.errorLoad"));
     } finally {
       setLoading(false);
     }
@@ -54,18 +56,18 @@ export default function CategoriesPage() {
         setCategories((prev) =>
           prev.map((c) => (c.id === updated.id ? updated : c))
         );
-        showSuccess("Category updated.");
+        showSuccess(t("categories.successUpdated"));
       } else {
         const created = await createCategoryApi(data);
         setCategories((prev) => [...prev, created]);
-        showSuccess("Category created.");
+        showSuccess(t("categories.successCreated"));
       }
       setModalOpen(false);
       setEditCategory(null);
     } catch (err: unknown) {
       setError(
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to save category."
+          ?.message || t("categories.errorSave")
       );
     } finally {
       setFormLoading(false);
@@ -76,9 +78,9 @@ export default function CategoriesPage() {
     try {
       await deleteCategoryApi(category.id);
       setCategories((prev) => prev.filter((c) => c.id !== category.id));
-      showSuccess("Category deleted.");
+      showSuccess(t("categories.successDeleted"));
     } catch {
-      setError("Failed to delete category.");
+      setError(t("categories.errorDelete"));
     }
   }
 
@@ -97,16 +99,16 @@ export default function CategoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("categories.title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            {categories.length} categor{categories.length !== 1 ? "ies" : "y"}
+            {t("categories.count", { count: categories.length })}
           </p>
         </div>
         <Button onClick={openCreate}>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add Category
+          {t("categories.addCategory")}
         </Button>
       </div>
 
@@ -114,7 +116,7 @@ export default function CategoriesPage() {
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
           {error}
-          <button onClick={() => setError(null)} className="ml-2 underline">Dismiss</button>
+          <button onClick={() => setError(null)} className="ms-2 underline">{t("common.dismiss")}</button>
         </div>
       )}
       {success && (
@@ -134,9 +136,9 @@ export default function CategoriesPage() {
       ) : categories.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
           <p className="text-4xl mb-3">🏷️</p>
-          <p className="text-gray-600 font-medium">No categories yet</p>
+          <p className="text-gray-600 font-medium">{t("categories.emptyTitle")}</p>
           <p className="text-gray-400 text-sm mt-1">
-            Create categories to organize your expenses
+            {t("categories.emptySubtitle")}
           </p>
         </div>
       ) : (
@@ -159,7 +161,7 @@ export default function CategoriesPage() {
           setModalOpen(false);
           setEditCategory(null);
         }}
-        title={editCategory ? "Edit Category" : "New Category"}
+        title={editCategory ? t("categories.editTitle") : t("categories.newTitle")}
       >
         <CategoryForm
           initial={editCategory || undefined}

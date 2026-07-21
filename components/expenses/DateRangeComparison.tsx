@@ -10,6 +10,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { DateRangeComparisonRow } from "@/types";
 import { getDateRangeComparisonApi } from "@/lib/services/expenses.service";
 import Button from "@/components/Button";
@@ -20,9 +22,9 @@ interface Props {
 
 const MONTHS_OPTIONS = [3, 6, 12];
 
-function monthLabel(yyyymm: string): string {
+function monthLabel(yyyymm: string, locale: string): string {
   const [year, month] = yyyymm.split("-").map(Number);
-  return new Date(year, month - 1).toLocaleString("en-US", {
+  return new Date(year, month - 1).toLocaleString(locale, {
     month: "short",
     year: "2-digit",
   });
@@ -34,6 +36,8 @@ function dayLabel(iso: string): string {
 }
 
 export default function DateRangeComparison({ currency }: Props) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const [startDay, setStartDay] = useState(1);
   const [endDay, setEndDay] = useState(15);
   const [months, setMonths] = useState(6);
@@ -42,7 +46,7 @@ export default function DateRangeComparison({ currency }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("en-US", {
+    new Intl.NumberFormat(language, {
       style: "currency",
       currency,
       minimumFractionDigits: 0,
@@ -57,7 +61,7 @@ export default function DateRangeComparison({ currency }: Props) {
 
   async function handleCompare() {
     if (startDay > endDay) {
-      setError("'From day' must be before or equal to 'To day'.");
+      setError(t("expenses.compare.errorDayRange"));
       return;
     }
     setError(null);
@@ -66,7 +70,7 @@ export default function DateRangeComparison({ currency }: Props) {
       const rows = await getDateRangeComparisonApi({ startDay, endDay, months });
       setData(rows);
     } catch {
-      setError("Failed to load comparison. Please try again.");
+      setError(t("expenses.compare.errorLoad"));
     } finally {
       setLoading(false);
     }
@@ -74,7 +78,7 @@ export default function DateRangeComparison({ currency }: Props) {
 
   const chartData = (data ?? []).map((d) => ({
     rawMonth: d.month,
-    month: monthLabel(d.month),
+    month: monthLabel(d.month, language),
     total: d.total,
     count: d.count,
     rangeStart: d.rangeStart,
@@ -84,15 +88,15 @@ export default function DateRangeComparison({ currency }: Props) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="mb-3">
-        <h2 className="text-base font-semibold text-gray-900">Compare Date Ranges</h2>
+        <h2 className="text-base font-semibold text-gray-900">{t("expenses.compare.title")}</h2>
         <p className="text-xs text-gray-400 mt-0.5">
-          See how spending in a specific day range (e.g. 10th–20th) compares across past months
+          {t("expenses.compare.subtitle")}
         </p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">From day</label>
+          <label className="text-xs text-gray-500 mb-1 block">{t("expenses.compare.fromDay")}</label>
           <input
             type="number"
             min={1}
@@ -103,7 +107,7 @@ export default function DateRangeComparison({ currency }: Props) {
           />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">To day</label>
+          <label className="text-xs text-gray-500 mb-1 block">{t("expenses.compare.toDay")}</label>
           <input
             type="number"
             min={1}
@@ -114,7 +118,7 @@ export default function DateRangeComparison({ currency }: Props) {
           />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Compare across</label>
+          <label className="text-xs text-gray-500 mb-1 block">{t("expenses.compare.compareAcross")}</label>
           <select
             value={months}
             onChange={(e) => setMonths(Number(e.target.value))}
@@ -122,13 +126,13 @@ export default function DateRangeComparison({ currency }: Props) {
           >
             {MONTHS_OPTIONS.map((m) => (
               <option key={m} value={m}>
-                Last {m} months
+                {t("expenses.compare.lastNMonths", { count: m })}
               </option>
             ))}
           </select>
         </div>
         <Button onClick={handleCompare} loading={loading} className="h-fit">
-          Compare
+          {t("expenses.compare.compare")}
         </Button>
       </div>
 
@@ -142,7 +146,7 @@ export default function DateRangeComparison({ currency }: Props) {
         <div className="mt-5 flex flex-col gap-4">
           {chartData.every((d) => d.total === 0) ? (
             <p className="text-center text-gray-400 text-sm py-6">
-              No expenses found in this day range for the selected months.
+              {t("expenses.compare.noExpensesFound")}
             </p>
           ) : (
             <ResponsiveContainer width="100%" height={180}>
@@ -157,7 +161,7 @@ export default function DateRangeComparison({ currency }: Props) {
                   width={36}
                 />
                 <Tooltip
-                  formatter={(v) => [formatCurrency(Number(v ?? 0)), "Spent"]}
+                  formatter={(v) => [formatCurrency(Number(v ?? 0)), t("charts.spent")]}
                   labelFormatter={(label, payload) => {
                     const p = payload?.[0]?.payload;
                     if (!p) return label;
@@ -184,10 +188,9 @@ export default function DateRangeComparison({ currency }: Props) {
                   }`}
                 >
                   <div>
-                    <span className="font-medium text-gray-900">{monthLabel(row.month)}</span>
-                    <span className="text-gray-400 text-xs ml-1.5">
-                      {dayLabel(row.rangeStart)}–{dayLabel(row.rangeEnd)} · {row.count} expense
-                      {row.count === 1 ? "" : "s"}
+                    <span className="font-medium text-gray-900">{monthLabel(row.month, language)}</span>
+                    <span className="text-gray-400 text-xs ms-1.5">
+                      {dayLabel(row.rangeStart)}–{dayLabel(row.rangeEnd)} · {t("expenses.compare.expenseCount", { count: row.count })}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">

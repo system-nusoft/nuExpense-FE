@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   getExpensesApi,
   createExpenseApi,
@@ -42,6 +43,7 @@ function SkeletonCard() {
 }
 
 export default function ExpensesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const successParam = searchParams.get("success");
@@ -60,7 +62,7 @@ export default function ExpensesPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState(
-    successParam ? "Expense saved successfully!" : null
+    successParam ? t("expenses.savedSuccess") : null
   );
 
   useEffect(() => {
@@ -158,7 +160,7 @@ export default function ExpensesPage() {
       setAddReceiptKey(result.receiptImageKey);
       setAddReceiptUrl(result.receiptImageUrl);
     } catch {
-      setAddError("Failed to upload receipt. You can still save without it.");
+      setAddError(t("expenses.errorUploadReceipt"));
     } finally {
       setAddReceiptUploading(false);
     }
@@ -166,7 +168,7 @@ export default function ExpensesPage() {
 
   async function handleAddSave() {
     if (!addVendor || !addAmount || !addDate) {
-      setAddError("Please fill in vendor, amount, and date.");
+      setAddError(t("expenses.errorRequiredFields"));
       return;
     }
     setAddError(null);
@@ -184,11 +186,11 @@ export default function ExpensesPage() {
       setExpenses((prev) => [created, ...prev]);
       setTotal((prev) => prev + 1);
       setAddOpen(false);
-      setSuccessMessage("Expense added successfully!");
+      setSuccessMessage(t("expenses.addedSuccess"));
     } catch (err: unknown) {
       setAddError(
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to add expense."
+          ?.message || t("expenses.errorAdd")
       );
     } finally {
       setAddLoading(false);
@@ -201,7 +203,7 @@ export default function ExpensesPage() {
       const result = await uploadReceiptApi(file);
       setEditReceiptKey(result.receiptImageKey);
     } catch {
-      setEditError("Failed to upload receipt.");
+      setEditError(t("expenses.errorUploadReceiptGeneric"));
     } finally {
       setEditReceiptUploading(false);
     }
@@ -240,7 +242,7 @@ export default function ExpensesPage() {
     } catch (err: unknown) {
       setEditError(
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to update expense."
+          ?.message || t("expenses.errorUpdate")
       );
     } finally {
       setEditLoading(false);
@@ -265,7 +267,7 @@ export default function ExpensesPage() {
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
   const categoryOptions = [
-    { value: "", label: "Uncategorized" },
+    { value: "", label: t("expenses.uncategorized") },
     ...categories.map((c) => ({ value: c.id, label: c.name })),
   ];
 
@@ -274,14 +276,14 @@ export default function ExpensesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("expenses.title")}</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={openAdd}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            Add Manually
+            {t("expenses.addManually")}
           </Button>
           <Link href="/scan">
             <Button>
@@ -289,7 +291,7 @@ export default function ExpensesPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              Scan Receipt
+              {t("expenses.scanReceipt")}
             </Button>
           </Link>
         </div>
@@ -314,7 +316,7 @@ export default function ExpensesPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
-          {filtersOpen ? "Hide Filters" : "Show Filters"}
+          {filtersOpen ? t("expenses.hideFilters") : t("expenses.showFilters")}
         </button>
 
         <button
@@ -324,7 +326,7 @@ export default function ExpensesPage() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0a2 2 0 002 2h2a2 2 0 002-2v-3a2 2 0 00-2-2h-2a2 2 0 00-2 2z" />
           </svg>
-          {compareOpen ? "Hide Compare" : "Compare Date Ranges"}
+          {compareOpen ? t("expenses.hideCompare") : t("expenses.compareDateRanges")}
         </button>
       </div>
 
@@ -355,9 +357,9 @@ export default function ExpensesPage() {
         ) : expenses.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
             <p className="text-4xl mb-3">🧾</p>
-            <p className="text-gray-600 font-medium">No expenses found</p>
+            <p className="text-gray-600 font-medium">{t("expenses.emptyTitle")}</p>
             <p className="text-gray-400 text-sm mt-1">
-              Try adjusting your filters or scan a new receipt
+              {t("expenses.emptySubtitle")}
             </p>
           </div>
         ) : (
@@ -386,10 +388,10 @@ export default function ExpensesPage() {
             onClick={() => setPage((p) => p - 1)}
             disabled={page <= 1 || loading}
           >
-            Previous
+            {t("common.previous")}
           </Button>
           <span className="text-sm text-gray-600">
-            Page {page} of {totalPages}
+            {t("common.pageOf", { page, totalPages })}
           </span>
           <Button
             variant="secondary"
@@ -397,13 +399,13 @@ export default function ExpensesPage() {
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= totalPages || loading}
           >
-            Next
+            {t("common.next")}
           </Button>
         </div>
       )}
 
       {/* Add Expense Modal */}
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add Expense">
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={t("expenses.modal.addTitle")}>
         <div className="flex flex-col gap-4">
           {addError && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-lg">
@@ -411,15 +413,15 @@ export default function ExpensesPage() {
             </div>
           )}
           <Input
-            label="Vendor / Merchant"
+            label={t("expenses.modal.vendorLabel")}
             value={addVendor}
             onChange={(e) => setAddVendor(e.target.value)}
-            placeholder="e.g. Starbucks"
+            placeholder={t("expenses.modal.vendorPlaceholder")}
             disabled={addLoading}
           />
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="Amount"
+              label={t("expenses.modal.amountLabel")}
               type="number"
               step="0.01"
               min="0"
@@ -429,7 +431,7 @@ export default function ExpensesPage() {
               disabled={addLoading}
             />
             <Select
-              label="Currency"
+              label={t("expenses.modal.currencyLabel")}
               value={addCurrency}
               onChange={(e) => setAddCurrency(e.target.value)}
               options={CURRENCY_OPTIONS}
@@ -437,21 +439,21 @@ export default function ExpensesPage() {
             />
           </div>
           <Input
-            label="Date"
+            label={t("expenses.modal.dateLabel")}
             type="date"
             value={addDate}
             onChange={(e) => setAddDate(e.target.value)}
             disabled={addLoading}
           />
           <Select
-            label="Category"
+            label={t("expenses.modal.categoryLabel")}
             value={addCategoryId}
             onChange={(e) => setAddCategoryId(e.target.value)}
             options={categoryOptions}
             disabled={addLoading}
           />
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Notes <span className="text-gray-400 font-normal">(optional)</span></label>
+            <label className="text-sm font-medium text-gray-700">{t("expenses.modal.notesLabel")} <span className="text-gray-400 font-normal">{t("common.optional")}</span></label>
             <textarea
               value={addNotes}
               onChange={(e) => setAddNotes(e.target.value)}
@@ -461,12 +463,12 @@ export default function ExpensesPage() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Receipt <span className="text-gray-400 font-normal">(optional)</span></label>
+            <label className="text-sm font-medium text-gray-700">{t("expenses.modal.receiptLabel")} <span className="text-gray-400 font-normal">{t("common.optional")}</span></label>
             {addReceiptUrl ? (
               <div className="flex items-center gap-3">
-                <span className="text-sm text-green-600 font-medium">✓ Receipt attached</span>
+                <span className="text-sm text-green-600 font-medium">✓ {t("common.receiptAttached")}</span>
                 <label className="cursor-pointer text-sm text-gray-500 hover:text-gray-700 underline">
-                  Replace
+                  {t("common.replace")}
                   <input
                     type="file"
                     accept="image/*"
@@ -484,7 +486,7 @@ export default function ExpensesPage() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                {addReceiptUploading ? "Uploading…" : "Attach receipt image"}
+                {addReceiptUploading ? t("common.uploading") : t("common.attachReceiptImage")}
                 <input
                   type="file"
                   accept="image/*"
@@ -500,10 +502,10 @@ export default function ExpensesPage() {
           </div>
           <div className="flex gap-3">
             <Button variant="secondary" onClick={() => setAddOpen(false)} disabled={addLoading} className="flex-1">
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button onClick={handleAddSave} loading={addLoading} disabled={addReceiptUploading} className="flex-1">
-              Save Expense
+              {t("expenses.modal.saveExpense")}
             </Button>
           </div>
         </div>
@@ -513,12 +515,12 @@ export default function ExpensesPage() {
       <Modal
         open={!!editExpense}
         onClose={() => setEditExpense(null)}
-        title="Edit Expense"
+        title={t("expenses.modal.editTitle")}
       >
         {editExpense && (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">Receipt</label>
+              <label className="text-sm font-medium text-gray-700">{t("expenses.modal.receiptLabel")}</label>
               <div className="flex items-center gap-3">
                 {(editExpense.receiptImageUrl && !editReceiptKey) && (
                   <a
@@ -527,14 +529,14 @@ export default function ExpensesPage() {
                     rel="noopener noreferrer"
                     className="text-sm text-[#3e6378] hover:text-[#263e4e] font-medium"
                   >
-                    View current
+                    {t("common.viewCurrent")}
                   </a>
                 )}
                 {editReceiptKey && (
-                  <span className="text-sm text-green-600 font-medium">✓ New receipt attached</span>
+                  <span className="text-sm text-green-600 font-medium">✓ {t("common.newReceiptAttached")}</span>
                 )}
                 <label className="cursor-pointer text-sm text-gray-500 hover:text-gray-700 underline">
-                  {editReceiptUploading ? "Uploading…" : editExpense.receiptImageUrl ? "Replace" : "Attach receipt"}
+                  {editReceiptUploading ? t("common.uploading") : editExpense.receiptImageUrl ? t("common.replace") : t("common.attachReceipt")}
                   <input
                     type="file"
                     accept="image/*"
@@ -554,14 +556,14 @@ export default function ExpensesPage() {
               </div>
             )}
             <Input
-              label="Vendor"
+              label={t("expenses.modal.vendorLabel")}
               value={editVendor}
               onChange={(e) => setEditVendor(e.target.value)}
               disabled={editLoading}
             />
             <div className="grid grid-cols-2 gap-3">
               <Input
-                label="Amount"
+                label={t("expenses.modal.amountLabel")}
                 type="number"
                 step="0.01"
                 value={editAmount}
@@ -569,7 +571,7 @@ export default function ExpensesPage() {
                 disabled={editLoading}
               />
               <Select
-                label="Currency"
+                label={t("expenses.modal.currencyLabel")}
                 value={editCurrency}
                 onChange={(e) => setEditCurrency(e.target.value)}
                 options={CURRENCY_OPTIONS}
@@ -577,21 +579,21 @@ export default function ExpensesPage() {
               />
             </div>
             <Input
-              label="Date"
+              label={t("expenses.modal.dateLabel")}
               type="date"
               value={editDate}
               onChange={(e) => setEditDate(e.target.value)}
               disabled={editLoading}
             />
             <Select
-              label="Category"
+              label={t("expenses.modal.categoryLabel")}
               value={editCategoryId}
               onChange={(e) => setEditCategoryId(e.target.value)}
               options={categoryOptions}
               disabled={editLoading}
             />
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Notes</label>
+              <label className="text-sm font-medium text-gray-700">{t("expenses.modal.notesLabel")}</label>
               <textarea
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
@@ -607,14 +609,14 @@ export default function ExpensesPage() {
                 disabled={editLoading}
                 className="flex-1"
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 onClick={handleEditSave}
                 loading={editLoading}
                 className="flex-1"
               >
-                Save Changes
+                {t("expenses.modal.saveChanges")}
               </Button>
             </div>
           </div>
@@ -625,12 +627,11 @@ export default function ExpensesPage() {
       <Modal
         open={!!deleteExpense}
         onClose={() => setDeleteExpense(null)}
-        title="Delete Expense"
+        title={t("expenses.modal.deleteTitle")}
       >
         <div className="flex flex-col gap-4">
           <p className="text-gray-600 text-sm">
-            Are you sure you want to delete the expense from{" "}
-            <strong>{deleteExpense?.vendor}</strong>? This cannot be undone.
+            {t("expenses.modal.deleteConfirm", { vendor: deleteExpense?.vendor })}
           </p>
           <div className="flex gap-3">
             <Button
@@ -639,7 +640,7 @@ export default function ExpensesPage() {
               disabled={deleteLoading}
               className="flex-1"
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               variant="danger"
@@ -647,7 +648,7 @@ export default function ExpensesPage() {
               loading={deleteLoading}
               className="flex-1"
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </div>
         </div>

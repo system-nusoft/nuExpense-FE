@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateMeApi } from "@/lib/services/auth.service";
 import { CURRENCY_OPTIONS } from "@/lib/currencies";
@@ -8,8 +10,11 @@ import Input from "@/components/Input";
 import Select from "@/components/Select";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
+import LanguageDropdown from "@/components/LanguageDropdown";
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const { user, updateUser } = useAuth();
 
   const [name, setName] = useState(user?.name || "");
@@ -34,7 +39,7 @@ export default function SettingsPage() {
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to update profile.";
+          ?.message || t("settings.errorUpdate");
       setError(message);
     } finally {
       setLoading(false);
@@ -44,13 +49,13 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-500 text-sm mt-1">Manage your profile and preferences</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("settings.title")}</h1>
+        <p className="text-gray-500 text-sm mt-1">{t("settings.subtitle")}</p>
       </div>
 
       {/* Profile card */}
       <Card padding="lg">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Profile</h2>
+        <h2 className="text-base font-semibold text-gray-900 mb-4">{t("settings.profile")}</h2>
 
         <form onSubmit={handleSave} className="flex flex-col gap-4">
           {error && (
@@ -63,31 +68,31 @@ export default function SettingsPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              Changes saved successfully!
+              {t("settings.changesSaved")}
             </div>
           )}
 
           {/* Email (read-only) */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Email</label>
+            <label className="text-sm font-medium text-gray-700">{t("settings.emailLabel")}</label>
             <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500">
               {user?.email}
             </div>
-            <p className="text-xs text-gray-400">Email cannot be changed</p>
+            <p className="text-xs text-gray-400">{t("settings.emailCannotChange")}</p>
           </div>
 
           <Input
-            label="Full Name"
+            label={t("settings.fullNameLabel")}
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
+            placeholder={t("settings.fullNamePlaceholder")}
             disabled={loading}
           />
 
           <div>
             <Select
-              label="Home Currency"
+              label={t("settings.homeCurrencyLabel")}
               name="homeCurrency"
               value={homeCurrency}
               onChange={(e) => setHomeCurrency(e.target.value)}
@@ -101,7 +106,7 @@ export default function SettingsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
                 <span>
-                  Past expenses will keep the conversion rates from when they were saved. Only new expenses will be converted to <strong>{homeCurrency}</strong>.
+                  {t("settings.currencyChangeWarning", { currency: homeCurrency })}
                 </span>
               </div>
             )}
@@ -109,20 +114,26 @@ export default function SettingsPage() {
 
           <div className="pt-1">
             <Button type="submit" loading={loading}>
-              Save Changes
+              {t("settings.saveChanges")}
             </Button>
           </div>
         </form>
       </Card>
 
+      {/* Language card */}
+      <Card padding="lg">
+        <h2 className="text-base font-semibold text-gray-900 mb-4">{t("settings.language")}</h2>
+        <LanguageDropdown />
+      </Card>
+
       {/* Account card */}
       <Card padding="lg">
-        <h2 className="text-base font-semibold text-gray-900 mb-3">Account</h2>
+        <h2 className="text-base font-semibold text-gray-900 mb-3">{t("settings.account")}</h2>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-700">Plan</p>
+            <p className="text-sm font-medium text-gray-700">{t("settings.plan")}</p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {user?.isPremium ? "You have access to all features" : "Upgrade to unlock AI scanning limits"}
+              {user?.isPremium ? t("settings.planPremium") : t("settings.planFree")}
             </p>
           </div>
           <span
@@ -134,15 +145,15 @@ export default function SettingsPage() {
               }
             `}
           >
-            {user?.isPremium ? "Premium" : "Free tier"}
+            {user?.isPremium ? t("settings.premium") : t("settings.freeTier")}
           </span>
         </div>
 
         <div className="mt-4 pt-4 border-t border-gray-100">
           <p className="text-sm text-gray-600">
-            <span className="font-medium">Member since: </span>
+            <span className="font-medium">{t("settings.memberSince")} </span>
             {user?.createdAt
-              ? new Date(user.createdAt).toLocaleDateString("en-US", {
+              ? new Date(user.createdAt).toLocaleDateString(language, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

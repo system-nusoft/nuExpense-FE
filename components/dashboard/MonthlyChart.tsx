@@ -10,6 +10,8 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { MonthlySummary } from "@/types";
 
 interface Props {
@@ -19,23 +21,26 @@ interface Props {
   onBarClick?: (month: string) => void;
 }
 
-function formatMonth(yyyymm: string): string {
+function formatMonth(yyyymm: string, locale: string): string {
   const [year, month] = yyyymm.split("-").map(Number);
-  return new Date(year, month - 1).toLocaleString("en-US", {
+  return new Date(year, month - 1).toLocaleString(locale, {
     month: "short",
     year: "2-digit",
   });
 }
 
 export default function MonthlyChart({ data, currency, selectedMonth, onBarClick }: Props) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+
   const chartData = data.map((d) => ({
     rawMonth: d.month,
-    month: formatMonth(d.month),
+    month: formatMonth(d.month, language),
     total: d.total,
   }));
 
   const formatValue = (v: number) =>
-    new Intl.NumberFormat("en-US", {
+    new Intl.NumberFormat(language, {
       style: "currency",
       currency,
       minimumFractionDigits: 0,
@@ -51,7 +56,7 @@ export default function MonthlyChart({ data, currency, selectedMonth, onBarClick
   if (chartData.length === 0) {
     return (
       <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
-        No data yet
+        {t("charts.noDataYet")}
       </div>
     );
   }
@@ -72,7 +77,7 @@ export default function MonthlyChart({ data, currency, selectedMonth, onBarClick
         <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
         <YAxis tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} tickFormatter={formatAxisTick} width={36} />
         <Tooltip
-          formatter={(v) => [formatValue(Number(v ?? 0)), "Spent"]}
+          formatter={(v) => [formatValue(Number(v ?? 0)), t("charts.spent")]}
           contentStyle={{ borderRadius: "8px", border: "1px solid #E5E7EB", fontSize: "12px" }}
         />
         <Bar dataKey="total" radius={[4, 4, 0, 0]}>

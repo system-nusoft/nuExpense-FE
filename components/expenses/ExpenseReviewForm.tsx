@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Category, ExpenseDraft, Expense } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { createExpenseApi } from "@/lib/services/expenses.service";
@@ -26,6 +27,7 @@ export default function ExpenseReviewForm({
   onSave,
   onCancel,
 }: ExpenseReviewFormProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const [vendor, setVendor] = useState(draft.vendor || "");
@@ -53,7 +55,7 @@ export default function ExpenseReviewForm({
     setError(null);
 
     if (!vendor || !amount || !date) {
-      setError("Please fill in vendor, amount, and date.");
+      setError(t("expenses.review.errorRequiredFields"));
       return;
     }
 
@@ -72,7 +74,7 @@ export default function ExpenseReviewForm({
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to save expense. Please try again.";
+          ?.message || t("expenses.review.errorSave");
       setError(message);
     } finally {
       setLoading(false);
@@ -84,11 +86,11 @@ export default function ExpenseReviewForm({
       {/* Receipt Preview */}
       {receiptPreviewUrl && (
         <div className="md:w-64 flex-shrink-0">
-          <p className="text-sm font-medium text-gray-700 mb-2">Receipt</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">{t("expenses.review.receiptLabel")}</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={receiptPreviewUrl}
-            alt="Receipt"
+            alt={t("expenses.review.receiptAlt")}
             className="w-full rounded-xl border border-gray-200 object-contain max-h-80"
           />
         </div>
@@ -104,24 +106,23 @@ export default function ExpenseReviewForm({
 
         {draft.confidence !== undefined && (
           <div className="bg-[#eef2f5] border border-[#d5e2ea] rounded-lg px-3 py-2 text-xs text-[#325163]">
-            AI confidence: {Math.round(draft.confidence * 100)}% — please review
-            and correct if needed.
+            {t("expenses.review.aiConfidence", { percent: Math.round(draft.confidence * 100) })}
           </div>
         )}
 
         <Input
-          label="Vendor / Merchant"
+          label={t("expenses.modal.vendorLabel")}
           name="vendor"
           value={vendor}
           onChange={(e) => setVendor(e.target.value)}
-          placeholder="e.g. Starbucks"
+          placeholder={t("expenses.modal.vendorPlaceholder")}
           required
           disabled={loading}
         />
 
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Amount"
+            label={t("expenses.modal.amountLabel")}
             type="number"
             name="amount"
             value={amount}
@@ -133,7 +134,7 @@ export default function ExpenseReviewForm({
             disabled={loading}
           />
           <Select
-            label="Currency"
+            label={t("expenses.modal.currencyLabel")}
             name="currency"
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
@@ -144,7 +145,7 @@ export default function ExpenseReviewForm({
         </div>
 
         <Input
-          label="Date"
+          label={t("expenses.modal.dateLabel")}
           type="date"
           name="date"
           value={date}
@@ -154,23 +155,23 @@ export default function ExpenseReviewForm({
         />
 
         <Select
-          label="Category"
+          label={t("expenses.modal.categoryLabel")}
           name="categoryId"
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
           options={categoryOptions}
-          placeholder="Select a category"
+          placeholder={t("expenses.review.categoryPlaceholder")}
           disabled={loading}
         />
 
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">
-            Notes <span className="text-gray-400 font-normal">(optional)</span>
+            {t("expenses.modal.notesLabel")} <span className="text-gray-400 font-normal">{t("common.optional")}</span>
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Any additional notes..."
+            placeholder={t("expenses.modal.notesPlaceholder")}
             rows={3}
             disabled={loading}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] focus:border-[#4a7a9a] disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
@@ -185,10 +186,10 @@ export default function ExpenseReviewForm({
             disabled={loading}
             className="flex-1"
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button type="submit" loading={loading} className="flex-1">
-            Save Expense
+            {t("expenses.modal.saveExpense")}
           </Button>
         </div>
       </form>

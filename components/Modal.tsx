@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ModalProps {
   open: boolean;
@@ -10,6 +11,7 @@ interface ModalProps {
 }
 
 export default function Modal({ open, onClose, title, children }: ModalProps) {
+  const { t } = useTranslation();
   // Lock body scroll when modal is open
   useEffect(() => {
     if (open) {
@@ -63,7 +65,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
-              aria-label="Close modal"
+              aria-label={t("common.close")}
             >
               <svg
                 className="w-5 h-5"

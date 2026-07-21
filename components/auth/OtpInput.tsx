@@ -72,7 +72,7 @@ export default function OtpInput({
     : "border-gray-300 focus:ring-[#4a7a9a]";
 
   return (
-    <div className="flex gap-2 justify-center" onPaste={handlePaste}>
+    <div className="flex gap-2 justify-center" dir="ltr" onPaste={handlePaste}>
       {digits.map((digit, i) => (
         <input
           key={i}

@@ -41,7 +41,7 @@ export default function Select({
       {label && (
         <label htmlFor={selectId} className="text-sm font-medium text-gray-700">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ms-1">*</span>}
         </label>
       )}
       <div className="relative">
@@ -53,7 +53,7 @@ export default function Select({
           required={required}
           disabled={disabled}
           className={`
-            w-full rounded-lg border px-3 py-2 pr-9 text-sm text-gray-900 bg-white
+            w-full rounded-lg border px-3 py-2 pe-9 text-sm text-gray-900 bg-white
             focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] focus:border-[#4a7a9a]
             disabled:bg-gray-100 disabled:cursor-not-allowed
             transition-colors appearance-none
@@ -71,7 +71,7 @@ export default function Select({
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+        <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-3">
           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { VendorInsight } from "@/types";
 
 interface Props {
@@ -8,8 +10,8 @@ interface Props {
   loading: boolean;
 }
 
-function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat("en-US", {
+function formatAmount(amount: number, currency: string, locale: string): string {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     minimumFractionDigits: 0,
@@ -17,8 +19,8 @@ function formatAmount(amount: number, currency: string): string {
   }).format(amount);
 }
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", {
+function formatDate(dateStr: string, locale: string): string {
+  return new Date(dateStr).toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
   });
@@ -31,6 +33,9 @@ const COLORS = [
 ];
 
 export default function VendorInsights({ data, currency, loading }: Props) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+
   if (loading) {
     return (
       <div className="flex flex-col gap-3">
@@ -51,7 +56,7 @@ export default function VendorInsights({ data, currency, loading }: Props) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-20 text-gray-400 text-sm">
-        No expense history yet
+        {t("vendorInsights.empty")}
       </div>
     );
   }
@@ -69,11 +74,11 @@ export default function VendorInsights({ data, currency, loading }: Props) {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">{v.name}</p>
             <p className="text-xs text-gray-400">
-              {v.count} visit{v.count !== 1 ? "s" : ""} &middot; avg {formatAmount(v.average, currency)} &middot; last {formatDate(v.lastDate)}
+              {t("vendorInsights.visits", { count: v.count })} &middot; {t("vendorInsights.avg", { amount: formatAmount(v.average, currency, language) })} &middot; {t("vendorInsights.last", { date: formatDate(v.lastDate, language) })}
             </p>
           </div>
           <p className="text-sm font-semibold text-gray-900 flex-shrink-0">
-            {formatAmount(v.total, currency)}
+            {formatAmount(v.total, currency, language)}
           </p>
         </div>
       ))}

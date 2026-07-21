@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { scanReceiptApi } from "@/lib/services/expenses.service";
 import { getCategoriesApi } from "@/lib/services/categories.service";
 import { Category, ExpenseDraft, Expense } from "@/types";
@@ -13,6 +14,7 @@ import Spinner from "@/components/Spinner";
 type Step = "upload" | "analyzing" | "review";
 
 export default function ScanPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,7 +73,7 @@ export default function ScanPage() {
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to analyze receipt. Please try again.";
+          ?.message || t("scan.errorAnalyze");
       setError(message);
       setStep("upload");
     } finally {
@@ -101,10 +103,10 @@ export default function ScanPage() {
         </div>
         <div>
           <h2 className="text-xl font-bold text-gray-900">
-            AI is reading your receipt...
+            {t("scan.analyzingTitle")}
           </h2>
           <p className="text-gray-500 text-sm mt-1">
-            Extracting vendor, amount, and date
+            {t("scan.analyzingSubtitle")}
           </p>
         </div>
       </div>
@@ -115,9 +117,9 @@ export default function ScanPage() {
     return (
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Review Expense</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("expenses.review.title")}</h1>
           <p className="text-gray-500 text-sm mt-1">
-            AI has pre-filled the details — review and save
+            {t("expenses.review.subtitle")}
           </p>
         </div>
         <div className="bg-white rounded-2xl shadow-sm p-6">
@@ -137,9 +139,9 @@ export default function ScanPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Scan Receipt</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("scan.title")}</h1>
         <p className="text-gray-500 text-sm mt-1">
-          Upload or capture a receipt — AI will extract the details
+          {t("scan.subtitle")}
         </p>
       </div>
 
@@ -149,7 +151,7 @@ export default function ScanPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <p className="font-medium">Something went wrong</p>
+            <p className="font-medium">{t("scan.errorTitle")}</p>
             <p className="text-red-600 mt-0.5">{error}</p>
           </div>
         </div>
@@ -168,7 +170,7 @@ export default function ScanPage() {
           <>
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-xs text-gray-400">or</span>
+              <span className="text-xs text-gray-400">{t("scan.or")}</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -186,7 +188,7 @@ export default function ScanPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Use Camera
+                {t("scan.useCamera")}
               </div>
             </label>
           </>
@@ -202,7 +204,7 @@ export default function ScanPage() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
-            Analyze Receipt
+            {t("scan.analyzeReceipt")}
           </Button>
         )}
       </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Category } from "@/types";
 import Button from "@/components/Button";
 
@@ -15,6 +17,8 @@ export default function CategoryListItem({
   onEdit,
   onDelete,
 }: CategoryListItemProps) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const iconDisplay =
@@ -37,7 +41,7 @@ export default function CategoryListItem({
         <p className="font-medium text-gray-900 text-sm">{category.name}</p>
         {category.budgetAmount && (
           <p className="text-xs text-gray-400 mt-0.5">
-            Budget: {Number(category.budgetAmount).toLocaleString()} / month
+            {t("categories.budgetPerMonth", { amount: Number(category.budgetAmount).toLocaleString(language) })}
           </p>
         )}
       </div>
@@ -45,7 +49,7 @@ export default function CategoryListItem({
       {/* Actions */}
       <div className="flex items-center gap-2">
         <Button size="sm" variant="secondary" onClick={() => onEdit(category)}>
-          Edit
+          {t("common.edit")}
         </Button>
 
         {confirmDelete ? (
@@ -58,14 +62,14 @@ export default function CategoryListItem({
                 setConfirmDelete(false);
               }}
             >
-              Confirm
+              {t("common.confirm")}
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setConfirmDelete(false)}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
           </div>
         ) : (

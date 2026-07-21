@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   getMonthlySummaryApi,
@@ -17,20 +19,20 @@ import VendorInsights from "@/components/dashboard/VendorInsights";
 
 type Tab = "overview" | "insights" | "export";
 
-function getGreeting(): string {
+function getGreetingKey(): "morning" | "afternoon" | "evening" {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "morning";
+  if (hour < 18) return "afternoon";
+  return "evening";
 }
 
 function currentMonthValue(): string {
   return new Date().toISOString().slice(0, 7);
 }
 
-function monthLabel(yyyymm: string): string {
+function monthLabel(yyyymm: string, locale: string): string {
   const [year, month] = yyyymm.split("-").map(Number);
-  return new Date(year, month - 1).toLocaleString("en-US", {
+  return new Date(year, month - 1).toLocaleString(locale, {
     month: "long",
     year: "numeric",
   });
@@ -75,14 +77,16 @@ function StatCard({
   );
 }
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "overview", label: "Overview" },
-  { id: "insights", label: "Insights" },
-  { id: "export", label: "Export" },
-];
-
 export default function DashboardPage() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   const { user } = useAuth();
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "overview", label: t("dashboard.tabs.overview") },
+    { id: "insights", label: t("dashboard.tabs.insights") },
+    { id: "export", label: t("dashboard.tabs.export") },
+  ];
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummary[]>([]);
   const [categorySummary, setCategorySummary] = useState<CategorySummary[]>([]);
@@ -99,7 +103,7 @@ export default function DashboardPage() {
   const currencyCode = user?.homeCurrency || "USD";
 
   function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(language, {
       style: "currency",
       currency: currencyCode,
       minimumFractionDigits: 2,
@@ -181,9 +185,9 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {getGreeting()}, {user?.name || user?.email?.split("@")[0] || "there"} 👋
+            {t(`dashboard.greeting.${getGreetingKey()}`)}, {user?.name || user?.email?.split("@")[0] || t("dashboard.greetingFallbackName")} 👋
           </h1>
-          <p className="text-gray-500 text-sm mt-0.5">Here&apos;s your expense overview</p>
+          <p className="text-gray-500 text-sm mt-0.5">{t("dashboard.subtitle")}</p>
         </div>
       </div>
 
@@ -192,9 +196,9 @@ export default function DashboardPage() {
         <div className="bg-gradient-to-br from-[#3e6378] to-[#325163] rounded-2xl p-5 text-white cursor-pointer hover:from-[#325163] hover:to-[#263e4e] transition-all shadow-lg active:scale-[0.99]">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[#abc5d5] text-xs font-medium mb-1">AI Receipt Scanner</p>
-              <h2 className="text-xl font-bold">Scan a Receipt</h2>
-              <p className="text-[#abc5d5] text-xs mt-1">Upload a photo, let AI extract the details</p>
+              <p className="text-[#abc5d5] text-xs font-medium mb-1">{t("dashboard.scanCta.eyebrow")}</p>
+              <h2 className="text-xl font-bold">{t("dashboard.scanCta.title")}</h2>
+              <p className="text-[#abc5d5] text-xs mt-1">{t("dashboard.scanCta.subtitle")}</p>
             </div>
             <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +211,7 @@ export default function DashboardPage() {
       </Link>
       <div className="text-center -mt-2">
         <Link href="/expenses?add=1" className="text-sm text-gray-400 hover:text-gray-600">
-          or <span className="underline">add manually</span>
+          {t("dashboard.orAddManually")} <span className="underline">{t("dashboard.addManually")}</span>
         </Link>
       </div>
 
@@ -237,20 +241,20 @@ export default function DashboardPage() {
               onClick={() => setSelectedMonth(prevMonth(selectedMonth))}
               disabled={atOldest}
               className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              aria-label="Previous month"
+              aria-label={t("dashboard.previousMonth")}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <div className="text-center">
-              <p className="font-semibold text-gray-900">{monthLabel(selectedMonth)}</p>
+              <p className="font-semibold text-gray-900">{monthLabel(selectedMonth, language)}</p>
               {!isCurrentMonth && (
                 <button
                   onClick={() => setSelectedMonth(currentMonth)}
                   className="text-xs text-[#3e6378] hover:underline mt-0.5"
                 >
-                  Back to current
+                  {t("dashboard.backToCurrent")}
                 </button>
               )}
             </div>
@@ -258,9 +262,9 @@ export default function DashboardPage() {
               onClick={() => setSelectedMonth(nextMonth(selectedMonth))}
               disabled={isCurrentMonth}
               className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              aria-label="Next month"
+              aria-label={t("dashboard.nextMonth")}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -268,13 +272,13 @@ export default function DashboardPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Total spent" value={formatCurrency(totalForMonth)} loading={summaryLoading} />
-            <StatCard label="Expenses" value={String(countForMonth)} loading={summaryLoading} />
+            <StatCard label={t("dashboard.stats.totalSpent")} value={formatCurrency(totalForMonth)} loading={summaryLoading} />
+            <StatCard label={t("dashboard.stats.expenses")} value={String(countForMonth)} loading={summaryLoading} />
           </div>
 
           {/* Monthly Trend */}
           <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Monthly Trend</h2>
+            <h2 className="text-base font-semibold text-gray-900 mb-4">{t("dashboard.monthlyTrend")}</h2>
             {summaryLoading ? (
               <ChartSkeleton />
             ) : (
@@ -290,7 +294,7 @@ export default function DashboardPage() {
           {/* Category Breakdown */}
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <h2 className="text-base font-semibold text-gray-900 mb-1">
-              {monthLabel(selectedMonth)} by Category
+              {t("dashboard.categoryBreakdown", { month: monthLabel(selectedMonth, language) })}
             </h2>
             {categoryLoading ? (
               <ChartSkeleton />
@@ -304,9 +308,9 @@ export default function DashboardPage() {
       {/* Tab: Insights */}
       {activeTab === "insights" && (
         <div className="flex flex-col gap-4">
-          <RecapCard month={selectedMonth} monthLabel={monthLabel(selectedMonth)} />
+          <RecapCard month={selectedMonth} monthLabel={monthLabel(selectedMonth, language)} />
           <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Top Vendors</h2>
+            <h2 className="text-base font-semibold text-gray-900 mb-4">{t("dashboard.topVendors")}</h2>
             <VendorInsights
               data={vendorInsights}
               currency={currencyCode}
@@ -320,12 +324,12 @@ export default function DashboardPage() {
       {activeTab === "export" && (
         <div className="bg-white rounded-2xl shadow-sm p-4">
           <div className="mb-4">
-            <h2 className="text-base font-semibold text-gray-900">Export CSV</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Select a date range to export</p>
+            <h2 className="text-base font-semibold text-gray-900">{t("dashboard.export.title")}</h2>
+            <p className="text-xs text-gray-400 mt-0.5">{t("dashboard.export.subtitle")}</p>
           </div>
           <div className="flex gap-2 mb-4">
             <div className="flex-1">
-              <label className="text-xs text-gray-500 mb-1 block">From</label>
+              <label className="text-xs text-gray-500 mb-1 block">{t("dashboard.export.from")}</label>
               <input
                 type="month"
                 value={csvStart}
@@ -334,7 +338,7 @@ export default function DashboardPage() {
               />
             </div>
             <div className="flex-1">
-              <label className="text-xs text-gray-500 mb-1 block">To</label>
+              <label className="text-xs text-gray-500 mb-1 block">{t("dashboard.export.to")}</label>
               <input
                 type="month"
                 value={csvEnd}
@@ -351,7 +355,7 @@ export default function DashboardPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
             </svg>
-            {csvLoading ? "Preparing…" : "Download CSV"}
+            {csvLoading ? t("dashboard.export.preparing") : t("dashboard.export.download")}
           </button>
         </div>
       )}

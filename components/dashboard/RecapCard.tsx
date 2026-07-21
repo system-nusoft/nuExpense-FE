@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getMonthlyRecapApi } from "@/lib/services/expenses.service";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function RecapCard({ month, monthLabel }: Props) {
+  const { t } = useTranslation();
   const [recap, setRecap] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -30,7 +32,7 @@ export default function RecapCard({ month, monthLabel }: Props) {
     <div className="bg-white rounded-2xl shadow-sm p-4">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">AI Monthly Recap</h2>
+          <h2 className="text-base font-semibold text-gray-900">{t("dashboard.aiMonthlyRecap")}</h2>
           <p className="text-xs text-gray-400 mt-0.5">{monthLabel}</p>
         </div>
         <span className="text-xs font-medium bg-[#eef2f5] text-[#3e6378] px-2 py-1 rounded-full">
@@ -54,13 +56,13 @@ export default function RecapCard({ month, monthLabel }: Props) {
             disabled={loading}
             className="mt-3 text-xs text-[#3e6378] hover:underline disabled:opacity-50"
           >
-            {loading ? "Regenerating…" : "Regenerate"}
+            {loading ? t("recap.regenerating") : t("recap.regenerate")}
           </button>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-4 gap-3">
           {error && (
-            <p className="text-xs text-red-500">Failed to generate recap. Try again.</p>
+            <p className="text-xs text-red-500">{t("recap.errorGenerate")}</p>
           )}
           <button
             onClick={handleGenerate}
@@ -73,18 +75,18 @@ export default function RecapCard({ month, monthLabel }: Props) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-                Analyzing spending…
+                {t("recap.analyzing")}
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Generate Recap
+                {t("recap.generate")}
               </>
             )}
           </button>
-          <p className="text-xs text-gray-400">Powered by Groq AI</p>
+          <p className="text-xs text-gray-400">{t("recap.poweredBy")}</p>
         </div>
       )}
     </div>

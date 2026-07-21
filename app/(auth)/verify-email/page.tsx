@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { verifyEmailApi, resendOtpApi } from "@/lib/services/auth.service";
 import OtpInput from "@/components/auth/OtpInput";
@@ -10,6 +11,7 @@ import Button from "@/components/Button";
 const RESEND_COOLDOWN = 60;
 
 function VerifyEmailContent() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useSearchParams();
   const email = params.get("email") ?? "";
@@ -34,7 +36,7 @@ function VerifyEmailContent() {
 
   const handleVerify = useCallback(async () => {
     if (code.length !== 6) {
-      setError("Please enter the full 6-digit code.");
+      setError(t("auth.verifyEmail.errorIncomplete"));
       return;
     }
     setError(null);
@@ -46,13 +48,13 @@ function VerifyEmailContent() {
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Invalid or expired code. Please try again.";
+          ?.message || t("auth.verifyEmail.errorInvalidCode");
       setError(message);
       setCode("");
     } finally {
       setLoading(false);
     }
-  }, [code, email, setUserFromTokens, router]);
+  }, [code, email, setUserFromTokens, router, t]);
 
   // Auto-submit when all 6 digits are entered
   useEffect(() => {
@@ -74,7 +76,7 @@ function VerifyEmailContent() {
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to resend code. Please try again.";
+          ?.message || t("auth.verifyEmail.errorResendFailed");
       setError(message);
     } finally {
       setResendLoading(false);
@@ -90,9 +92,9 @@ function VerifyEmailContent() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Check your email</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t("auth.verifyEmail.checkEmail")}</h1>
         <p className="text-gray-500 text-sm mt-2">
-          We sent a 6-digit code to{" "}
+          {t("auth.verifyEmail.sentCode")}{" "}
           <span className="font-medium text-gray-700">{email}</span>
         </p>
       </div>
@@ -116,7 +118,7 @@ function VerifyEmailContent() {
         error={!!error}
       />
 
-      <p className="text-xs text-gray-400">Code expires in 10 minutes</p>
+      <p className="text-xs text-gray-400">{t("auth.verifyEmail.codeExpires")}</p>
 
       <Button
         onClick={handleVerify}
@@ -125,20 +127,20 @@ function VerifyEmailContent() {
         className="px-10"
         disabled={code.length !== 6}
       >
-        Verify Email
+        {t("auth.verifyEmail.verify")}
       </Button>
 
       <div className="text-sm text-gray-500">
-        Didn&apos;t receive it?{" "}
+        {t("auth.verifyEmail.noReceive")}{" "}
         {cooldown > 0 ? (
-          <span className="text-gray-400">Resend in {cooldown}s</span>
+          <span className="text-gray-400">{t("auth.verifyEmail.resendIn", { seconds: cooldown })}</span>
         ) : (
           <button
             onClick={handleResend}
             disabled={resendLoading}
             className="text-[#3e6378] font-medium hover:underline disabled:opacity-50"
           >
-            {resendLoading ? "Sending..." : "Resend code"}
+            {resendLoading ? t("auth.verifyEmail.sending") : t("auth.verifyEmail.resend")}
           </button>
         )}
       </div>
