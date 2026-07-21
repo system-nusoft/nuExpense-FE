@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Expense, Category } from "@/types";
 
 interface ExpenseCardProps {
@@ -10,9 +12,9 @@ interface ExpenseCardProps {
   onDelete?: (expense: Expense) => void;
 }
 
-function formatDate(dateString: string): string {
+function formatDate(dateString: string, locale: string): string {
   try {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString(locale, {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -22,10 +24,10 @@ function formatDate(dateString: string): string {
   }
 }
 
-function formatAmount(amount: string, currency: string): string {
+function formatAmount(amount: string, currency: string, locale: string): string {
   const num = parseFloat(amount);
   if (isNaN(num)) return `${currency} ${amount}`;
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: currency || "USD",
     minimumFractionDigits: 2,
@@ -38,6 +40,9 @@ export default function ExpenseCard({
   onEdit,
   onDelete,
 }: ExpenseCardProps) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
       {/* Category color dot */}
@@ -59,21 +64,21 @@ export default function ExpenseCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="font-medium text-gray-900 truncate text-sm">
-              {expense.vendor || "Unknown vendor"}
+              {expense.vendor || t("expenses.unknownVendor")}
             </p>
             <p className="text-xs text-gray-500 mt-0.5">
-              {category?.name || "Uncategorized"} &middot; {formatDate(expense.date)}
+              {category?.name || t("expenses.uncategorized")} &middot; {formatDate(expense.date, language)}
             </p>
           </div>
-          <div className="flex-shrink-0 text-right">
+          <div className="flex-shrink-0 text-end">
             <p className="font-semibold text-gray-900 text-sm">
-              {formatAmount(expense.amount, expense.currency)}
+              {formatAmount(expense.amount, expense.currency, language)}
             </p>
             {expense.homeCurrencyCode &&
               expense.homeCurrencyCode !== expense.currency &&
               expense.homeCurrencyAmount && (
                 <p className="text-xs text-gray-400 mt-0.5">
-                  ≈ {formatAmount(expense.homeCurrencyAmount, expense.homeCurrencyCode)}
+                  ≈ {formatAmount(expense.homeCurrencyAmount, expense.homeCurrencyCode, language)}
                 </p>
               )}
             {expense.receiptImageUrl && (
@@ -87,7 +92,7 @@ export default function ExpenseCard({
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                View Receipt
+                {t("expenses.viewReceipt")}
               </a>
             )}
           </div>
@@ -105,7 +110,7 @@ export default function ExpenseCard({
             <button
               onClick={() => onEdit(expense)}
               className="p-1.5 text-gray-400 hover:text-[#3e6378] hover:bg-[#eef2f5] rounded-lg transition-colors"
-              aria-label="Edit expense"
+              aria-label={t("expenses.editAria")}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -116,7 +121,7 @@ export default function ExpenseCard({
             <button
               onClick={() => onDelete(expense)}
               className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              aria-label="Delete expense"
+              aria-label={t("expenses.deleteAria")}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

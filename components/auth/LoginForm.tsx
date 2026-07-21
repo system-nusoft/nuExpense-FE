@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 
 export default function LoginForm() {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const router = useRouter();
 
@@ -21,7 +23,7 @@ export default function LoginForm() {
     setError(null);
 
     if (!email || !password) {
-      setError("Please fill in all fields.");
+      setError(t("auth.login.errorFillFields"));
       return;
     }
 
@@ -33,7 +35,7 @@ export default function LoginForm() {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message ||
-        "Invalid email or password. Please try again.";
+        t("auth.login.errorInvalid");
       setError(message);
     } finally {
       setLoading(false);
@@ -49,38 +51,38 @@ export default function LoginForm() {
       )}
 
       <Input
-        label="Email"
+        label={t("auth.emailLabel")}
         type="email"
         name="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@example.com"
+        placeholder={t("auth.emailPlaceholder")}
         required
         disabled={loading}
       />
 
       <Input
-        label="Password"
+        label={t("auth.passwordLabel")}
         type="password"
         name="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="••••••••"
+        placeholder={t("auth.login.passwordPlaceholder")}
         required
         disabled={loading}
       />
 
       <Button type="submit" loading={loading} className="w-full mt-2">
-        Sign In
+        {t("auth.login.submit")}
       </Button>
 
       <p className="text-sm text-center text-gray-500">
-        Don&apos;t have an account?{" "}
+        {t("auth.login.noAccount")}{" "}
         <Link
           href="/signup"
           className="text-[#3e6378] font-medium hover:underline"
         >
-          Create one
+          {t("auth.login.createOne")}
         </Link>
       </p>
     </form>

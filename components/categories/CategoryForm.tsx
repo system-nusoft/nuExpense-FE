@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Category } from "@/types";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -42,6 +43,7 @@ export default function CategoryForm({
   onCancel,
   loading = false,
 }: CategoryFormProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState(initial?.name || "");
   const [color, setColor] = useState(initial?.color || PRESET_COLORS[0]);
   const [icon, setIcon] = useState(initial?.icon || "");
@@ -54,12 +56,12 @@ export default function CategoryForm({
     e.preventDefault();
     setError(null);
     if (!name.trim()) {
-      setError("Category name is required.");
+      setError(t("categories.form.errorNameRequired"));
       return;
     }
     const parsed = budgetAmount ? parseFloat(budgetAmount) : null;
     if (budgetAmount && (isNaN(parsed!) || parsed! <= 0)) {
-      setError("Budget must be a positive number.");
+      setError(t("categories.form.errorBudgetInvalid"));
       return;
     }
     onSave({ name: name.trim(), color, icon: icon || undefined, budgetAmount: parsed });
@@ -74,18 +76,18 @@ export default function CategoryForm({
       )}
 
       <Input
-        label="Category Name"
+        label={t("categories.form.nameLabel")}
         name="name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="e.g. Food & Dining"
+        placeholder={t("categories.form.namePlaceholder")}
         required
         disabled={loading}
       />
 
       {/* Color picker */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">Color</label>
+        <label className="text-sm font-medium text-gray-700">{t("categories.form.colorLabel")}</label>
         <div className="flex flex-wrap gap-2">
           {PRESET_COLORS.map((c) => (
             <button
@@ -126,7 +128,7 @@ export default function CategoryForm({
       {/* Icon selector */}
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium text-gray-700">
-          Icon <span className="text-gray-400 font-normal">(optional)</span>
+          {t("categories.form.iconLabel")} <span className="text-gray-400 font-normal">{t("common.optional")}</span>
         </label>
         <div className="flex flex-wrap gap-2">
           {PRESET_ICONS.map((ic) => (
@@ -153,7 +155,7 @@ export default function CategoryForm({
                 : "border-gray-200 text-gray-500 hover:border-gray-400"
             }`}
           >
-            None
+            {t("categories.form.none")}
           </button>
         </div>
       </div>
@@ -161,7 +163,7 @@ export default function CategoryForm({
       {/* Monthly budget */}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700">
-          Monthly Budget <span className="text-gray-400 font-normal">(optional)</span>
+          {t("categories.form.budgetLabel")} <span className="text-gray-400 font-normal">{t("common.optional")}</span>
         </label>
         <input
           type="number"
@@ -169,11 +171,11 @@ export default function CategoryForm({
           step="any"
           value={budgetAmount}
           onChange={(e) => setBudgetAmount(e.target.value)}
-          placeholder="e.g. 50000"
+          placeholder={t("categories.form.budgetPlaceholder")}
           disabled={loading}
           className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] disabled:bg-gray-50 disabled:text-gray-400"
         />
-        <p className="text-xs text-gray-400">Set a monthly spend limit for this category</p>
+        <p className="text-xs text-gray-400">{t("categories.form.budgetHelp")}</p>
       </div>
 
       <div className="flex gap-3 pt-1">
@@ -184,10 +186,10 @@ export default function CategoryForm({
           disabled={loading}
           className="flex-1"
         >
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button type="submit" loading={loading} className="flex-1">
-          {initial ? "Update" : "Create"} Category
+          {initial ? t("categories.form.update") : t("categories.form.create")}
         </Button>
       </div>
     </form>

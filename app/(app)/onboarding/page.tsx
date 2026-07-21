@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { updateMeApi } from "@/lib/services/auth.service";
 import { getCategoriesApi } from "@/lib/services/categories.service";
@@ -12,6 +13,7 @@ import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 
 export default function OnboardingPage() {
+  const { t } = useTranslation();
   const { user, updateUser } = useAuth();
   const router = useRouter();
 
@@ -40,7 +42,7 @@ export default function OnboardingPage() {
 
       setStep(2);
     } catch {
-      setError("Failed to save currency. Please try again.");
+      setError(t("onboarding.errorSaveCurrency"));
     } finally {
       setSaving(false);
     }
@@ -75,10 +77,10 @@ export default function OnboardingPage() {
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <div className="mb-6">
               <h1 className="text-xl font-bold text-gray-900">
-                What&apos;s your home currency?
+                {t("onboarding.currencyTitle")}
               </h1>
               <p className="text-gray-500 text-sm mt-1">
-                We&apos;ll use this as the default for your expenses
+                {t("onboarding.currencySubtitle")}
               </p>
             </div>
 
@@ -90,7 +92,7 @@ export default function OnboardingPage() {
               )}
 
               <Select
-                label="Currency"
+                label={t("onboarding.currencyLabel")}
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
                 options={CURRENCY_OPTIONS}
@@ -99,7 +101,7 @@ export default function OnboardingPage() {
               />
 
               <Button type="submit" loading={saving} className="w-full mt-2">
-                Continue
+                {t("onboarding.continue")}
               </Button>
             </form>
           </div>
@@ -109,10 +111,10 @@ export default function OnboardingPage() {
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <div className="mb-6">
               <h1 className="text-xl font-bold text-gray-900">
-                Your default categories
+                {t("onboarding.categoriesTitle")}
               </h1>
               <p className="text-gray-500 text-sm mt-1">
-                These were set up for you automatically. You can customize them later.
+                {t("onboarding.categoriesSubtitle")}
               </p>
             </div>
 
@@ -144,7 +146,7 @@ export default function OnboardingPage() {
             )}
 
             <Button onClick={handleFinish} className="w-full">
-              Looks good, go to Dashboard!
+              {t("onboarding.finish")}
             </Button>
           </div>
         )}

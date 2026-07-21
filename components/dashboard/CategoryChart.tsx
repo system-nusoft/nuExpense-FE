@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { CategorySummary } from "@/types";
 
 interface Props {
@@ -10,8 +12,11 @@ interface Props {
 }
 
 export default function CategoryChart({ data, currency }: Props) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+
   const formatValue = (v: number) =>
-    new Intl.NumberFormat("en-US", {
+    new Intl.NumberFormat(language, {
       style: "currency",
       currency,
       minimumFractionDigits: 2,
@@ -23,7 +28,7 @@ export default function CategoryChart({ data, currency }: Props) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
-        No expenses this month
+        {t("charts.noExpensesThisMonth")}
       </div>
     );
   }
@@ -37,9 +42,9 @@ export default function CategoryChart({ data, currency }: Props) {
         >
           <span className="text-lg flex-shrink-0">🎯</span>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-[#263e4e]">No budgets set yet</p>
+            <p className="text-xs font-medium text-[#263e4e]">{t("charts.noBudgetsSet")}</p>
             <p className="text-xs text-[#3e6378]">
-              Set a monthly budget per category to see how close you are to your limit →
+              {t("charts.noBudgetsSetDescription")}
             </p>
           </div>
         </Link>
@@ -61,7 +66,7 @@ export default function CategoryChart({ data, currency }: Props) {
             ))}
           </Pie>
           <Tooltip
-            formatter={(v) => [formatValue(Number(v ?? 0)), "Spent"]}
+            formatter={(v) => [formatValue(Number(v ?? 0)), t("charts.spent")]}
             contentStyle={{
               borderRadius: "8px",
               border: "1px solid #E5E7EB",
@@ -90,7 +95,7 @@ export default function CategoryChart({ data, currency }: Props) {
                     {d.icon && !/[a-z]/.test(d.icon) ? `${d.icon} ` : ""}{d.name}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                <div className="flex items-center gap-2 flex-shrink-0 ms-2">
                   <span className="text-gray-400 text-xs">{pct}%</span>
                   <span className={`font-medium ${overBudget ? "text-red-600" : "text-gray-900"}`}>
                     {formatValue(d.total)}
@@ -98,7 +103,7 @@ export default function CategoryChart({ data, currency }: Props) {
                 </div>
               </div>
               {d.budgetAmount && (
-                <div className="mt-1.5 ml-4">
+                <div className="mt-1.5 ms-4">
                   <div className="w-full bg-gray-100 rounded-full h-1.5">
                     <div
                       className="h-1.5 rounded-full transition-all"
@@ -107,8 +112,8 @@ export default function CategoryChart({ data, currency }: Props) {
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5">
                     {overBudget
-                      ? `${formatValue(d.total - d.budgetAmount)} over budget`
-                      : `${formatValue(d.budgetAmount - d.total)} remaining`}
+                      ? t("charts.overBudget", { amount: formatValue(d.total - d.budgetAmount) })
+                      : t("charts.remaining", { amount: formatValue(d.budgetAmount - d.total) })}
                   </p>
                 </div>
               )}

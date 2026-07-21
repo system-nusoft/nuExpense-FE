@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 
 export default function SignupForm() {
+  const { t } = useTranslation();
   const { signup } = useAuth();
   const router = useRouter();
 
@@ -22,12 +24,12 @@ export default function SignupForm() {
     setError(null);
 
     if (!name || !email || !password) {
-      setError("Please fill in all fields.");
+      setError(t("auth.signup.errorFillFields"));
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError(t("auth.signup.errorPasswordLength"));
       return;
     }
 
@@ -38,7 +40,7 @@ export default function SignupForm() {
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to create account. Please try again.";
+          ?.message || t("auth.signup.errorFailed");
       setError(message);
     } finally {
       setLoading(false);
@@ -54,46 +56,46 @@ export default function SignupForm() {
       )}
 
       <Input
-        label="Full Name"
+        label={t("auth.signup.fullNameLabel")}
         type="text"
         name="name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Jane Smith"
+        placeholder={t("auth.signup.fullNamePlaceholder")}
         required
         disabled={loading}
       />
 
       <Input
-        label="Email"
+        label={t("auth.emailLabel")}
         type="email"
         name="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@example.com"
+        placeholder={t("auth.emailPlaceholder")}
         required
         disabled={loading}
       />
 
       <Input
-        label="Password"
+        label={t("auth.passwordLabel")}
         type="password"
         name="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="At least 8 characters"
+        placeholder={t("auth.signup.passwordPlaceholder")}
         required
         disabled={loading}
       />
 
       <Button type="submit" loading={loading} className="w-full mt-2">
-        Create Account
+        {t("auth.signup.submit")}
       </Button>
 
       <p className="text-sm text-center text-gray-500">
-        Already have an account?{" "}
+        {t("auth.signup.haveAccount")}{" "}
         <Link href="/login" className="text-[#3e6378] font-medium hover:underline">
-          Sign in
+          {t("auth.signup.signIn")}
         </Link>
       </p>
     </form>

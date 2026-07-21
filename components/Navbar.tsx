@@ -4,18 +4,21 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
-
-const navLinks = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/expenses", label: "Expenses" },
-  { href: "/categories", label: "Categories" },
-];
+import LanguageDropdown from "@/components/LanguageDropdown";
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+
+  const navLinks = [
+    { href: "/dashboard", label: t("nav.dashboard") },
+    { href: "/expenses", label: t("nav.expenses") },
+    { href: "/categories", label: t("nav.categories") },
+  ];
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -74,18 +77,21 @@ export default function Navbar() {
 
             {/* Right side */}
             <div className="flex items-center gap-3">
+              <div className="hidden sm:block">
+                <LanguageDropdown />
+              </div>
               {/* User avatar dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen((prev) => !prev)}
                   className="w-9 h-9 bg-[#3e6378] text-white rounded-full flex items-center justify-center font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#4a7a9a] focus:ring-offset-2"
-                  aria-label="User menu"
+                  aria-label={t("nav.userMenu")}
                 >
                   {userInitial}
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
+                  <div className="absolute end-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
                     <div className="px-4 py-2 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900 truncate">
                         {user?.name || "User"}
@@ -93,6 +99,9 @@ export default function Navbar() {
                       <p className="text-xs text-gray-500 truncate">
                         {user?.email}
                       </p>
+                    </div>
+                    <div className="sm:hidden px-2 py-1 border-b border-gray-100">
+                      <LanguageDropdown />
                     </div>
                     <Link
                       href="/settings"
@@ -102,7 +111,7 @@ export default function Navbar() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      Profile
+                      {t("nav.profile")}
                     </Link>
                     <button
                       onClick={handleLogout}
@@ -111,7 +120,7 @@ export default function Navbar() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      Logout
+                      {t("nav.logout")}
                     </button>
                   </div>
                 )}
@@ -121,7 +130,7 @@ export default function Navbar() {
               <button
                 onClick={() => setMobileOpen((prev) => !prev)}
                 className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-                aria-label="Toggle navigation"
+                aria-label={t("nav.toggleNav")}
               >
                 {mobileOpen ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,12 +175,13 @@ export default function Navbar() {
                 </Link>
               ))}
             </nav>
-            <div className="px-3 py-4 border-t border-gray-100">
+            <div className="px-3 py-4 border-t border-gray-100 flex flex-col gap-3">
+              <LanguageDropdown />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 w-full px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
               >
-                Logout
+                {t("nav.logout")}
               </button>
             </div>
           </div>

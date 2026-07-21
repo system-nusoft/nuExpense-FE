@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 interface FileDropzoneProps {
   onFile: (file: File) => void;
@@ -17,6 +18,7 @@ export default function FileDropzone({
   preview = true,
   className = "",
 }: FileDropzoneProps) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export default function FileDropzone({
           file.type.startsWith(type.replace("/*", ""))
         );
         if (!isValid) {
-          setError(`Invalid file type. Accepted: ${accept}`);
+          setError(t("scan.dropzone.errorInvalidType", { accept }));
           return;
         }
       }
@@ -44,7 +46,7 @@ export default function FileDropzone({
       // Validate size
       const maxBytes = maxSizeMB * 1024 * 1024;
       if (file.size > maxBytes) {
-        setError(`File is too large. Maximum size is ${maxSizeMB}MB.`);
+        setError(t("scan.dropzone.errorTooLarge", { maxSize: maxSizeMB }));
         return;
       }
 
@@ -129,7 +131,7 @@ export default function FileDropzone({
               {fileName}
             </p>
             <p className="text-xs text-[#3e6378] font-medium">
-              Click or drag to replace
+              {t("scan.dropzone.clickOrDragReplace")}
             </p>
           </div>
         ) : (
@@ -150,16 +152,16 @@ export default function FileDropzone({
               </svg>
             </div>
             <p className="text-sm font-medium text-gray-700">
-              Drop your receipt here
+              {t("scan.dropzone.dropHere")}
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              or{" "}
+              {t("scan.or")}{" "}
               <span className="text-[#3e6378] font-medium">
-                click to browse
+                {t("scan.dropzone.orClickToBrowse")}
               </span>
             </p>
             <p className="text-xs text-gray-400 mt-2">
-              {accept.replace("image/*", "Images")} — max {maxSizeMB}MB
+              {t("scan.dropzone.acceptHint", { accept: accept.replace("image/*", t("scan.dropzone.images")), maxSize: maxSizeMB })}
             </p>
           </>
         )}
