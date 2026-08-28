@@ -356,9 +356,20 @@
     "account": "Cuenta",
     "plan": "Plan",
     "planPremium": "Tienes acceso a todas las funciones",
-    "planFree": "Mejora tu plan para desbloquear los límites de escaneo con IA",
+    "planFree": "Mejora tu plan para desbloquear estadísticas con IA e historial de gastos",
     "premium": "Premium",
     "freeTier": "Plan gratuito",
     "memberSince": "Miembro desde:"
+  },
+  "premium": {
+    "upgradeButton": "Mejorar a Premium",
+    "manageSubscriptionButton": "Gestionar suscripción",
+    "upgradeError": "No se pudo iniciar el pago. Inténtalo de nuevo.",
+    "portalError": "No se pudo abrir el portal de facturación. Inténtalo de nuevo.",
+    "insightsLockedTitle": "Desbloquea los Insights con IA",
+    "insightsLockedBody": "Obtén resúmenes mensuales generados por IA y consulta tus principales proveedores con Premium.",
+    "historyLockedTitle": "Función Premium",
+    "historyLockedBody": "Ver meses anteriores es una función Premium. Mejora tu plan para ver todo tu historial de gastos.",
+    "upgradeCta": "Mejorar a Premium"
   }
 }

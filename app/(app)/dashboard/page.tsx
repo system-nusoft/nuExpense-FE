@@ -16,6 +16,8 @@ import MonthlyChart from "@/components/dashboard/MonthlyChart";
 import CategoryChart from "@/components/dashboard/CategoryChart";
 import RecapCard from "@/components/dashboard/RecapCard";
 import VendorInsights from "@/components/dashboard/VendorInsights";
+import PremiumUpsellCard from "@/components/dashboard/PremiumUpsellCard";
+import Modal from "@/components/Modal";
 
 type Tab = "overview" | "insights" | "export";
 
@@ -99,7 +101,9 @@ export default function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState(currentMonthValue());
   const [csvStart, setCsvStart] = useState(currentMonthValue());
   const [csvEnd, setCsvEnd] = useState(currentMonthValue());
+  const [showHistoryUpsell, setShowHistoryUpsell] = useState(false);
 
+  const isPremium = !!user?.isPremium;
   const currencyCode = user?.homeCurrency || "USD";
 
   function formatCurrency(amount: number): string {
@@ -126,6 +130,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function loadVendors() {
+      if (!user?.isPremium) {
+        setVendorLoading(false);
+        return;
+      }
       try {
         const data = await getVendorInsightsApi();
         setVendorInsights(data);
@@ -136,7 +144,7 @@ export default function DashboardPage() {
       }
     }
     loadVendors();
-  }, []);
+  }, [user?.isPremium]);
 
   const loadCategorySummary = useCallback(async (month: string) => {
     setCategoryLoading(true);
@@ -161,6 +169,15 @@ export default function DashboardPage() {
   const isCurrentMonth = selectedMonth === currentMonth;
   const oldestAvailable = monthlySummary[0]?.month;
   const atOldest = oldestAvailable ? selectedMonth <= oldestAvailable : false;
+
+  // Free tier is restricted to the current month — going further back is a Premium feature.
+  function goToMonth(month: string) {
+    if (!isPremium && month !== currentMonth) {
+      setShowHistoryUpsell(true);
+      return;
+    }
+    setSelectedMonth(month);
+  }
 
   function lastDayOfMonth(yyyymm: string): string {
     const [year, month] = yyyymm.split("-").map(Number);
@@ -238,8 +255,8 @@ export default function DashboardPage() {
           {/* Month selector */}
           <div className="flex items-center justify-between bg-white rounded-2xl shadow-sm px-4 py-3">
             <button
-              onClick={() => setSelectedMonth(prevMonth(selectedMonth))}
-              disabled={atOldest}
+              onClick={() => goToMonth(prevMonth(selectedMonth))}
+              disabled={isPremium && atOldest}
               className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               aria-label={t("dashboard.previousMonth")}
             >
@@ -286,7 +303,7 @@ export default function DashboardPage() {
                 data={monthlySummary}
                 currency={currencyCode}
                 selectedMonth={selectedMonth}
-                onBarClick={(month) => setSelectedMonth(month)}
+                onBarClick={(month) => goToMonth(month)}
               />
             )}
           </div>
@@ -308,15 +325,24 @@ export default function DashboardPage() {
       {/* Tab: Insights */}
       {activeTab === "insights" && (
         <div className="flex flex-col gap-4">
-          <RecapCard month={selectedMonth} monthLabel={monthLabel(selectedMonth, language)} />
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">{t("dashboard.topVendors")}</h2>
-            <VendorInsights
-              data={vendorInsights}
-              currency={currencyCode}
-              loading={vendorLoading}
+          {isPremium ? (
+            <>
+              <RecapCard month={selectedMonth} monthLabel={monthLabel(selectedMonth, language)} />
+              <div className="bg-white rounded-2xl shadow-sm p-4">
+                <h2 className="text-base font-semibold text-gray-900 mb-4">{t("dashboard.topVendors")}</h2>
+                <VendorInsights
+                  data={vendorInsights}
+                  currency={currencyCode}
+                  loading={vendorLoading}
+                />
+              </div>
+            </>
+          ) : (
+            <PremiumUpsellCard
+              titleKey="premium.insightsLockedTitle"
+              bodyKey="premium.insightsLockedBody"
             />
-          </div>
+          )}
         </div>
       )}
 
@@ -359,6 +385,20 @@ export default function DashboardPage() {
           </button>
         </div>
       )}
+
+      <Modal
+        open={showHistoryUpsell}
+        onClose={() => setShowHistoryUpsell(false)}
+        title={t("premium.historyLockedTitle")}
+      >
+        <p className="text-sm text-gray-600 mb-4">{t("premium.historyLockedBody")}</p>
+        <Link
+          href="/settings"
+          className="inline-flex items-center gap-2 bg-[#3e6378] hover:bg-[#325163] text-white text-sm font-medium rounded-xl px-4 py-2 transition-colors"
+        >
+          {t("premium.upgradeCta")}
+        </Link>
+      </Modal>
     </div>
   );
 }

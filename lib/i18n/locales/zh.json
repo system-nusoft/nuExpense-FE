@@ -356,9 +356,20 @@
     "account": "账户",
     "plan": "套餐",
     "planPremium": "您可以使用所有功能",
-    "planFree": "升级以解除 AI 扫描次数限制",
+    "planFree": "升级以解锁 AI 洞察和支出历史记录",
     "premium": "高级版",
     "freeTier": "免费版",
     "memberSince": "注册于："
+  },
+  "premium": {
+    "upgradeButton": "升级到高级版",
+    "manageSubscriptionButton": "管理订阅",
+    "upgradeError": "无法启动结账流程，请重试。",
+    "portalError": "无法打开账单管理页面，请重试。",
+    "insightsLockedTitle": "解锁 AI 洞察",
+    "insightsLockedBody": "升级到高级版，获取 AI 生成的月度总结并查看您的主要商家。",
+    "historyLockedTitle": "高级版功能",
+    "historyLockedBody": "查看以往月份是高级版功能。升级即可查看完整的支出历史记录。",
+    "upgradeCta": "升级到高级版"
   }
 }

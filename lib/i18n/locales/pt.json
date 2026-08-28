@@ -356,9 +356,20 @@
     "account": "Conta",
     "plan": "Plano",
     "planPremium": "Você tem acesso a todos os recursos",
-    "planFree": "Faça upgrade para desbloquear os limites de escaneamento com IA",
+    "planFree": "Faça upgrade para desbloquear insights de IA e histórico de despesas",
     "premium": "Premium",
     "freeTier": "Plano gratuito",
     "memberSince": "Membro desde:"
+  },
+  "premium": {
+    "upgradeButton": "Fazer upgrade para Premium",
+    "manageSubscriptionButton": "Gerenciar assinatura",
+    "upgradeError": "Não foi possível iniciar o checkout. Tente novamente.",
+    "portalError": "Não foi possível abrir o portal de cobrança. Tente novamente.",
+    "insightsLockedTitle": "Desbloqueie os Insights de IA",
+    "insightsLockedBody": "Obtenha resumos mensais gerados por IA e veja seus principais fornecedores com o Premium.",
+    "historyLockedTitle": "Recurso Premium",
+    "historyLockedBody": "Ver meses anteriores é um recurso Premium. Faça upgrade para ver todo o seu histórico de despesas.",
+    "upgradeCta": "Fazer upgrade para Premium"
   }
 }

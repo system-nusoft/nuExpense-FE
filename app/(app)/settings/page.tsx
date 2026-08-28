@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { updateMeApi } from "@/lib/services/auth.service";
+import { updateMeApi, getMeApi } from "@/lib/services/auth.service";
+import { createCheckoutSessionApi, createPortalSessionApi } from "@/lib/services/billing.service";
 import { CURRENCY_OPTIONS } from "@/lib/currencies";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
@@ -16,6 +18,8 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const { user, updateUser } = useAuth();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [name, setName] = useState(user?.name || "");
   const [homeCurrency, setHomeCurrency] = useState(
@@ -24,6 +28,42 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingError, setBillingError] = useState<string | null>(null);
+
+  // Coming back from Stripe Checkout — refetch the user so isPremium reflects the new subscription.
+  useEffect(() => {
+    if (searchParams.get("upgraded") !== "true") return;
+    getMeApi()
+      .then((freshUser) => updateUser(freshUser))
+      .finally(() => router.replace("/settings"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  async function handleUpgrade() {
+    setBillingError(null);
+    setBillingLoading(true);
+    try {
+      const { url } = await createCheckoutSessionApi();
+      window.location.href = url;
+    } catch {
+      setBillingError(t("premium.upgradeError"));
+      setBillingLoading(false);
+    }
+  }
+
+  async function handleManageSubscription() {
+    setBillingError(null);
+    setBillingLoading(true);
+    try {
+      const { url } = await createPortalSessionApi();
+      window.location.href = url;
+    } catch {
+      setBillingError(t("premium.portalError"));
+      setBillingLoading(false);
+    }
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -160,6 +200,24 @@ export default function SettingsPage() {
                 })
               : "—"}
           </p>
+        </div>
+
+        {billingError && (
+          <div className="mt-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+            {billingError}
+          </div>
+        )}
+
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          {user?.isPremium ? (
+            <Button variant="secondary" loading={billingLoading} onClick={handleManageSubscription}>
+              {t("premium.manageSubscriptionButton")}
+            </Button>
+          ) : (
+            <Button loading={billingLoading} onClick={handleUpgrade}>
+              {t("premium.upgradeButton")}
+            </Button>
+          )}
         </div>
       </Card>
     </div>
