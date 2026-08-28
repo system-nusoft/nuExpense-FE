@@ -377,9 +377,20 @@
     "account": "Account",
     "plan": "Plan",
     "planPremium": "You have access to all features",
-    "planFree": "Upgrade to unlock AI scanning limits",
+    "planFree": "Upgrade to unlock AI insights and expense history",
     "premium": "Premium",
     "freeTier": "Free tier",
     "memberSince": "Member since:"
+  },
+  "premium": {
+    "upgradeButton": "Upgrade to Premium",
+    "manageSubscriptionButton": "Manage subscription",
+    "upgradeError": "Couldn't start checkout. Please try again.",
+    "portalError": "Couldn't open billing portal. Please try again.",
+    "insightsLockedTitle": "Unlock AI Insights",
+    "insightsLockedBody": "Get AI-generated monthly recaps and see your top vendors with Premium.",
+    "historyLockedTitle": "Premium feature",
+    "historyLockedBody": "Viewing past months is a Premium feature. Upgrade to see your full expense history.",
+    "upgradeCta": "Upgrade to Premium"
   }
 }

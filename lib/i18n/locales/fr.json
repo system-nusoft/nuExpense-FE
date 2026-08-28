@@ -356,9 +356,20 @@
     "account": "Compte",
     "plan": "Forfait",
     "planPremium": "Vous avez accès à toutes les fonctionnalités",
-    "planFree": "Passez à un forfait supérieur pour lever les limites de scan par IA",
+    "planFree": "Passez à un forfait supérieur pour débloquer les insights IA et l'historique des dépenses",
     "premium": "Premium",
     "freeTier": "Forfait gratuit",
     "memberSince": "Membre depuis :"
+  },
+  "premium": {
+    "upgradeButton": "Passer à Premium",
+    "manageSubscriptionButton": "Gérer l'abonnement",
+    "upgradeError": "Impossible de démarrer le paiement. Veuillez réessayer.",
+    "portalError": "Impossible d'ouvrir le portail de facturation. Veuillez réessayer.",
+    "insightsLockedTitle": "Débloquez les insights IA",
+    "insightsLockedBody": "Obtenez des résumés mensuels générés par IA et consultez vos principaux fournisseurs avec Premium.",
+    "historyLockedTitle": "Fonctionnalité Premium",
+    "historyLockedBody": "Consulter les mois précédents est une fonctionnalité Premium. Passez à un forfait supérieur pour voir tout votre historique de dépenses.",
+    "upgradeCta": "Passer à Premium"
   }
 }
