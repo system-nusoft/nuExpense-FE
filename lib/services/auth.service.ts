@@ -1,4 +1,4 @@
-import { get, post, patch } from "@/lib/api";
+import { get, post, patch, del } from "@/lib/api";
 import { User } from "@/types";
 
 export interface AuthResponse {
@@ -53,4 +53,8 @@ export async function getMeApi(): Promise<User> {
 
 export async function updateMeApi(data: Partial<User>): Promise<User> {
   return patch<User>("/users/me", data);
+}
+
+export async function deleteAccountApi(password: string): Promise<{ message: string }> {
+  return del<{ message: string }>("/users/me", { data: { password } });
 }

@@ -37,6 +37,9 @@ export default function Footer() {
           <Link href="/privacy" className="hover:text-gray-600 transition-colors">
             {t("landing.footerPrivacy")}
           </Link>
+          <Link href="/delete-account" className="hover:text-gray-600 transition-colors">
+            {t("landing.footerDeleteAccount")}
+          </Link>
         </div>
       </div>
     </footer>
