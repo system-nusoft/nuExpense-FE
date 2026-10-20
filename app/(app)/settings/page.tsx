@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { updateMeApi, getMeApi } from "@/lib/services/auth.service";
+import { updateMeApi, getMeApi, deleteAccountApi } from "@/lib/services/auth.service";
 import { createCheckoutSessionApi, createPortalSessionApi } from "@/lib/services/billing.service";
 import { CURRENCY_OPTIONS } from "@/lib/currencies";
 import Input from "@/components/Input";
@@ -13,11 +13,12 @@ import Select from "@/components/Select";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 import LanguageDropdown from "@/components/LanguageDropdown";
+import Modal from "@/components/Modal";
 
 export default function SettingsPage() {
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -31,6 +32,25 @@ export default function SettingsPage() {
 
   const [billingLoading, setBillingLoading] = useState(false);
   const [billingError, setBillingError] = useState<string | null>(null);
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function handleDeleteAccount(e: React.FormEvent) {
+    e.preventDefault();
+    setDeleteError(null);
+    setDeleteLoading(true);
+    try {
+      await deleteAccountApi(deletePassword);
+      await logout();
+      router.replace("/");
+    } catch {
+      setDeleteError(t("deleteAccount.error"));
+      setDeleteLoading(false);
+    }
+  }
 
   // Coming back from Stripe Checkout — refetch the user so isPremium reflects the new subscription.
   useEffect(() => {
@@ -220,6 +240,61 @@ export default function SettingsPage() {
           )}
         </div>
       </Card>
+
+      {/* Delete account card */}
+      <Card padding="lg">
+        <h2 className="text-base font-semibold text-gray-900 mb-1">{t("deleteAccount.settingsHeading")}</h2>
+        <p className="text-sm text-gray-500 mb-4">{t("deleteAccount.settingsBody")}</p>
+        <Button variant="secondary" onClick={() => setDeleteOpen(true)}>
+          {t("deleteAccount.settingsButton")}
+        </Button>
+      </Card>
+
+      <Modal
+        open={deleteOpen}
+        onClose={() => {
+          if (deleteLoading) return;
+          setDeleteOpen(false);
+          setDeletePassword("");
+          setDeleteError(null);
+        }}
+        title={t("deleteAccount.modalTitle")}
+      >
+        <form onSubmit={handleDeleteAccount} className="flex flex-col gap-4">
+          <p className="text-sm text-gray-600">{t("deleteAccount.modalBody")}</p>
+          {deleteError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+              {deleteError}
+            </div>
+          )}
+          <Input
+            label={t("deleteAccount.passwordLabel")}
+            name="deletePassword"
+            type="password"
+            value={deletePassword}
+            onChange={(e) => setDeletePassword(e.target.value)}
+            disabled={deleteLoading}
+            required
+          />
+          <div className="flex gap-3 justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={deleteLoading}
+              onClick={() => {
+                setDeleteOpen(false);
+                setDeletePassword("");
+                setDeleteError(null);
+              }}
+            >
+              {t("deleteAccount.cancel")}
+            </Button>
+            <Button type="submit" variant="danger" loading={deleteLoading} disabled={!deletePassword}>
+              {t("deleteAccount.confirm")}
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

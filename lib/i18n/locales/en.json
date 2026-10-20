@@ -98,7 +98,8 @@
     "ctaSubtitle": "Sign up free and scan your first receipt in under a minute.",
     "ctaButton": "Get started for free",
     "footerRights": "© {{year}} <0>nusoft</0>. All rights reserved.",
-    "footerPrivacy": "Privacy Policy"
+    "footerPrivacy": "Privacy Policy",
+    "footerDeleteAccount": "Delete account"
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -118,6 +119,14 @@
       {
         "heading": "Cookies",
         "body": "Cookies are small digital signature files that are stored by your web browser that allow your preferences to be recorded when visiting the website. Also, they may be used to track your return visits to the website. 3rd party advertising companies may also use cookies for tracking purposes."
+      },
+      {
+        "heading": "Mobile app data",
+        "body": "When you use the Zingg app we process your email address, name, home currency, the expenses and categories you enter, and receipt images you scan or upload. Receipts are sent to an AI service to extract details. Data is stored on our servers and is deleted when you delete your account. Payments are handled by Stripe, Apple or Google; we never see your card details."
+      },
+      {
+        "heading": "Advertising",
+        "body": "The free version of the mobile app shows ads served by Google AdMob. AdMob may collect your device's advertising ID, IP address and app usage data to show and measure ads, and may personalize ads where you consent. In regions where required, we ask for your consent before showing ads, and you can change your choice at any time in the device's privacy settings. Premium subscribers see no ads. Learn more at policies.google.com/technologies/partner-sites."
       }
     ]
   },
@@ -392,5 +401,30 @@
     "historyLockedTitle": "Premium feature",
     "historyLockedBody": "Viewing past months is a Premium feature. Upgrade to see your full expense history.",
     "upgradeCta": "Upgrade to Premium"
+  },
+  "deleteAccount": {
+    "title": "Delete your Zingg account",
+    "intro": "You can permanently delete your Zingg account and the data associated with it at any time.",
+    "inAppHeading": "Delete from the app",
+    "inAppSteps": [
+      "Log in to Zingg on the web or in the mobile app.",
+      "Go to Settings.",
+      "Scroll to \"Delete account\", tap the button and confirm with your password."
+    ],
+    "emailHeading": "Can't log in?",
+    "emailBody": "Email us from the address registered to your account at hello@nusoft.co with the subject \"Delete my account\" and we will delete it within 30 days.",
+    "whatHeading": "What gets deleted",
+    "whatBody": "Your profile, email address, expenses, categories, budgets, uploaded receipt images and authentication tokens are permanently deleted. If you have an active web subscription, it is cancelled. This cannot be undone.",
+    "keptHeading": "What we keep",
+    "keptBody": "We do not retain your personal data after deletion. Payment records held by our payment processors (Stripe, Apple, Google) are kept by them as required by law. Subscriptions bought through the App Store or Google Play must be cancelled in your store account settings.",
+    "settingsHeading": "Delete account",
+    "settingsBody": "Permanently delete your account, expenses, categories and receipts. This cannot be undone.",
+    "settingsButton": "Delete account",
+    "modalTitle": "Delete account?",
+    "modalBody": "This permanently deletes all your data. Enter your password to confirm.",
+    "passwordLabel": "Password",
+    "confirm": "Delete permanently",
+    "cancel": "Cancel",
+    "error": "Could not delete your account. Check your password and try again."
   }
 }
